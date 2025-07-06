@@ -1,0 +1,124 @@
+
+PerspectiveCamera {
+    center 0 0 10
+    direction 0 0 -1
+    up 0 1 0
+    angle 30
+    width 512
+    height 512
+}
+
+Background {
+    color 0 0 0 
+}
+
+Materials {
+    numMaterials 9
+    PhongMaterial { diffuseColor 1 0 0 }
+    PhongMaterial { diffuseColor 0 1 0 }
+    PhongMaterial { diffuseColor 0 0 1 }
+    PhongMaterial { diffuseColor 0 1 1 }
+    PhongMaterial { diffuseColor 1 0 1 }
+
+    PhongMaterial { diffuseColor 0.63 0.065 0.05 }
+    PhongMaterial { diffuseColor 0.14 0.45 0.091 }
+    PhongMaterial { diffuseColor 0.725 0.71 0.68 }
+
+    PhongMaterial {
+        emission 10 10 10
+        diffuseColor 0 0 0
+    }
+}
+
+Group {
+    numObjects 15
+    MaterialIndex 8
+    Transform {
+        Translate 0.5 0.5 0.5
+        Scale 0.5 0.5 0.5
+        Sphere {
+        center 0 0 0
+            radius 1 
+        }          
+    }
+      
+
+    MaterialIndex 1
+    Sphere {
+	center 1 1 1 
+        radius 0.75
+    }
+    MaterialIndex 3
+    Sphere {
+	center -1 -1 1 
+        radius 0.75
+    }
+    MaterialIndex 2
+    Sphere {
+	center -1 1 -1 
+        radius 0.75
+    }
+    MaterialIndex 4
+    Sphere {
+	center 1 -1 -1 
+        radius 0.75 
+    }
+
+    MaterialIndex 5
+    Triangle {
+        vertex0 -2 -2 -2
+        vertex1 -2 -2 2
+        vertex2 -2 2 2
+    }
+    Triangle {
+        vertex0 -2 -2 -2
+        vertex1 -2 2 2
+        vertex2 -2 2 -2
+    }
+
+    MaterialIndex 6
+    Triangle {
+        vertex0 2 -2 -2
+        vertex1 2 2 -2
+        vertex2 2 2 2
+    }    
+    Triangle {
+        vertex0 2 -2 -2
+        vertex1 2 2 2
+        vertex2 2 -2 2
+    }
+
+    MaterialIndex 7
+    Triangle {
+        vertex0 -2 -2 -2
+        vertex1 2 -2 -2
+        vertex2 2 -2 2
+    }
+    Triangle {
+        vertex0 -2 -2 -2
+        vertex1 2 -2 2
+        vertex2 -2 -2 2
+    }
+    Triangle {
+        vertex0 -2 -2 -2
+        vertex1 -2 2 -2
+        vertex2 2 2 -2
+    }
+    Triangle {
+        vertex0 -2 -2 -2
+        vertex1 2 2 -2
+        vertex2 2 -2 -2
+    }
+    Triangle {
+        vertex0 -2 2 -2
+        vertex1 -2 2 2
+        vertex2 2 2 2
+    }
+    Triangle {
+        vertex0 -2 2 -2
+        vertex1 2 2 2
+        vertex2 2 2 -2
+    }
+
+}
+

@@ -1,0 +1,63 @@
+PerspectiveCamera {
+    center 0 8 35
+    direction 0 0 -1
+    up 0 1 0
+    angle 30
+    width 2048
+    height 2048
+}
+
+Lights {
+    numLights 0
+}
+
+Background {
+    color 0 0 0 
+}
+
+Materials {
+    numMaterials 2
+    PhongMaterial {
+        diffuseColor 1 1 1
+    }
+
+    PhongMaterial {
+        emission 10 10 10
+        diffuseColor 1 1 1  
+    }
+}
+
+Group {
+    numObjects 5
+    MaterialIndex 0
+    Transform {
+        YRotate 90
+        Scale 10 10 10
+        TriangleMesh {
+            obj_file mesh/roadBike/roadBike_10x.obj
+        }    
+    }
+    
+    Triangle {
+        vertex0 -25 0 -25
+        vertex1 25 0 25
+        vertex2 25 0 -25
+    }
+    Triangle {
+        vertex0 -25 0 -25
+        vertex1 -25 0 25
+        vertex2 25 0 25
+    }
+
+    MaterialIndex 1
+    Triangle {
+        vertex0 20 30 30
+        vertex1 -20 30 30
+        vertex2 20 40 20
+    }
+    Triangle {
+        vertex0 -20 30 30
+        vertex1 -20 40 20
+        vertex2 20 40 20
+    }
+}

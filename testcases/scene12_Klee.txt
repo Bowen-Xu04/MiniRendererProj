@@ -1,0 +1,50 @@
+PerspectiveCamera {
+    center 0 8 35
+    direction 0 0 -1
+    up 0 1 0
+    angle 30
+    width 2048
+    height 2048
+}
+
+Lights {
+    numLights 2
+    PointLight {
+        position 0 20 20
+        color 1 1 1 
+    }
+    DirectionalLight {
+        direction 0 0 1
+        color 1 1 1
+    }
+}
+
+Background {
+    color 0 0 0 
+}
+
+Materials {
+    numMaterials 1
+    PhongMaterial {
+        diffuseColor 1 1 1
+    }
+}
+
+Group {
+    numObjects 3
+    MaterialIndex 0
+    TriangleMesh {
+        obj_file mesh/Klee/Klee.obj
+    }        
+    
+    Triangle {
+        vertex0 -25 0 -25
+        vertex1 25 0 25
+        vertex2 25 0 -25
+    }
+    Triangle {
+        vertex0 -25 0 -25
+        vertex1 -25 0 25
+        vertex2 25 0 25
+    }
+}

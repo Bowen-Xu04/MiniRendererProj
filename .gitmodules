@@ -1,0 +1,3 @@
+[submodule "deps/stb_image"]
+	path = deps/stb_image
+	url = https://github.com/nothings/stb

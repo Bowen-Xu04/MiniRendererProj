@@ -1,0 +1,11 @@
+newmtl orzel-mat
+Ns 201.339563
+Ka 0.114896 0.114896 0.114896
+Kd 0.725 0.71 0.68
+Ks 0.500000 0.500000 0.500000
+Ke 0.000000 0.000000 0.000000
+Ni 1.000000
+d 1.000000
+illum 3
+map_Kd orzel-mat_Diffuse.jpg
+norm orzel-mat_Normal.jpg
