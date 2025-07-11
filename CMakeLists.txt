@@ -5,12 +5,7 @@ IF(NOT CMAKE_BUILD_TYPE)
     SET(CMAKE_BUILD_TYPE Release)
 ENDIF()
 
-# ADD_SUBDIRECTORY(deps)
 ADD_SUBDIRECTORY(deps/vecmath)
-#ADD_SUBDIRECTORY(deps/tqdm)
-# ADD_SUBDIRECTORY(deps/glad)
-# ADD_SUBDIRECTORY(deps/glfw-3.4/include)
-# ADD_SUBDIRECTORY(deps/tinyobjloader)
 
 SET(RTProject_SOURCES
         src/glsl.cpp
@@ -50,20 +45,10 @@ SET(RTProject_INCLUDES
         include/utils.hpp
         )
 
-#INCLUDE_DIRECTORIES(${OPENGL_INCLUDE_DIRS})
-#INCLUDE_DIRECTORIES(${glfw3_INCLUDE_DIRS})
-#message(STATUS ${OPENGL_INCLUDE_DIRS})
-#message(STATUS ${glfw3_INCLUDE_DIRS})
 INCLUDE_DIRECTORIES("./deps")
 INCLUDE_DIRECTORIES("./deps/glad")
 INCLUDE_DIRECTORIES("./deps/glfw-3.4/include")
 INCLUDE_DIRECTORIES("./shaders")
-#INCLUDE_DIRECTORIES("./deps/tqdm")
-# INCLUDE_DIRECTORIES("./deps/tqdm/include")
-#INCLUDE_DIRECTORIES("./deps/tqdm/include/tqdm")
-
-# SET(GLFW_DIR "D:/OpenGL/GLFW/glfw-3.4/build/src")
-# SET(GLAD_INCLUDE_DIR "D:/OpenGL/GLAD1/include")
 
 set(OpenGL_GL_PREFERENCE "GLVND")
 find_package(OpenGL REQUIRED)
@@ -80,22 +65,15 @@ endif()
 find_package(OpenMP REQUIRED)
 if(OpenMP_FOUND)
     message(STATUS "Found OpenMP.") 
-    # message(STATUS ${OPENMP_C_FLAGS}) 
-    # message(STATUS ${OPENMP_CXX_FLAGS}) 
     set(CMAKE_C_FLAGS ${CMAKE_C_FLAGS} ${OPENMP_C_FLAGS} "-fopenmp")
     set(CMAKE_CXX_FLAGS ${CMAKE_CXX_FLAGS} ${OPENMP_CXX_FLAGS} "-fopenmp")
 endif()
 
-# SET(GLAD_SOURCES "D:/OpenGL/GLAD1/src/glad.c")
-
-
 add_library(glad STATIC deps/glad/glad.c)
-#TARGET_INCLUDE_DIRECTORIES(glad PUBLIC GLAD_INCLUDE_DIR)
 
 SET(CMAKE_CXX_STANDARD 17)
 
 ADD_EXECUTABLE(${PROJECT_NAME} ${RTProject_SOURCES} ${RTProject_INCLUDES})
 
-#TARGET_LINK_DIRECTORIES(${PROJECT_NAME} PRIVATE "./deps/glfw-3.4/build/src/Debug")
 TARGET_LINK_LIBRARIES(${PROJECT_NAME} vecmath glad ${_GLFW_} ${CMAKE_DL_LIBS})
 TARGET_INCLUDE_DIRECTORIES(${PROJECT_NAME} PRIVATE include ${glfw3_INCLUDE_DIRS} ${GLAD_INCLUDE_DIR})

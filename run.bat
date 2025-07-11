@@ -9,7 +9,7 @@ make -C build -j %NUMBER_OF_PROCESSORS%
 @REM   -d, --device     rendering device (string [=CPU])
 @REM   -a, --as         acceleration structure
 @REM   -s, --spp        samples per pixel (int [=1])
-@REM   -s, --msaa       multi-sampling antialiasing (int [=1])
+@REM   -m, --msaa       multi-sampling antialiasing (int [=1])
 @REM   -n, --nee        next event estimation
 @REM   -t, --sampler    sampler of textures (string [=Bilinear])
 @REM   -p, --rr         Russian roulette (float [=0.8])
