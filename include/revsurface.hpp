@@ -16,7 +16,6 @@ public:
     RevSurface(Curve* pCurve, Material* material) : pCurve(pCurve), Object3D(material) {
         id = primitive_cnt++;
         type = OBJECT_TYPE::REVSURFACE;
-        //objects.push_back(this);
         box = calculate_box();
     }
 
@@ -25,7 +24,6 @@ public:
             delete pCurve;
         }
         primitive_cnt--;
-        //objects.erase(objects.begin() + id);
     }
 
     void calc_value_derivative(const Ray& r, float t, float& Ft, float& dFt, CurvePoint& cp) {
@@ -106,74 +104,14 @@ public:
             xmax = std::max(xmax, std::fabs(cp.x()));
             ymin = std::min(ymin, cp.y());
             ymax = std::max(ymax, cp.y());
-            // Check flat.
+            // Check flatness.
             if (cp.z() != 0.0) {
                 printf("Profile of revSurface must be flat on xy plane.\n");
-                assert(0);
-                //exit(0);
+                exit(1);
             }
         }
-        // printvec3({ -xmax, ymin, -xmax });
-        // printvec3({ xmax, ymax, xmax });
-        //printf("\n");
         return AABB({ -xmax, ymin, -xmax }, { xmax, ymax, xmax });
     }
-
-    // void drawGL() override {
-    //     Object3D::drawGL();
-
-    //     // Definition for drawable surface.
-    //     typedef std::tuple<unsigned, unsigned, unsigned> Tup3u;
-    //     // Surface is just a struct that contains vertices, normals, and
-    //     // faces.  VV[i] is the position of vertex i, and VN[i] is the normal
-    //     // of vertex i.  A face is a triple i,j,k corresponding to a triangle
-    //     // with (vertex i, normal i), (vertex j, normal j), ...
-    //     // Currently this struct is computed every time when canvas refreshes.
-    //     // You can store this as member function to accelerate rendering.
-
-    //     struct Surface {
-    //         std::vector<Vector3f> VV; // position
-    //         std::vector<Vector3f> VN; // normal
-    //         std::vector<Tup3u> VF; // face，unsigned int三元组，指示该三角形面片的三个顶点的索引
-    //     } surface;
-
-    //     std::vector<CurvePoint> curvePoints;
-    //     pCurve->discretize(30, curvePoints);
-    //     const int steps = 40;
-    //     for (unsigned int ci = 0; ci < curvePoints.size(); ++ci) {
-    //         const CurvePoint& cp = curvePoints[ci];
-    //         for (unsigned int i = 0; i < steps; ++i) { // 对cp进行旋转，获得圆周上的steps个采样点
-    //             float t = (float)i / steps;
-    //             Quat4f rot; // 表示旋转的四元数
-    //             rot.setAxisAngle(t * 2 * 3.14159, Vector3f::UP); // 绕Vector3f::UP=(0,1,0)旋转。因此，是xy平面内的曲线绕y轴旋转
-    //             Vector3f pnew = Matrix3f::rotation(rot) * cp.V;
-    //             // if(i%10==0){
-    //             //     printf("[%d][%d] ",ci,i);
-    //             //     std::cout<<pnew<<std::endl;
-    //             // }
-    //             Vector3f pNormal = Vector3f::cross(cp.T, -Vector3f::FORWARD); // 顶点的法向量，由曲线的法向量计算得
-    //             Vector3f nnew = Matrix3f::rotation(rot) * pNormal;
-    //             surface.VV.push_back(pnew);
-    //             surface.VN.push_back(nnew);
-    //             int i1 = (i + 1 == steps) ? 0 : i + 1;
-    //             if (ci != curvePoints.size() - 1) {
-    //                 surface.VF.emplace_back((ci + 1) * steps + i, ci * steps + i1, ci * steps + i);
-    //                 surface.VF.emplace_back((ci + 1) * steps + i, (ci + 1) * steps + i1, ci * steps + i1);
-    //             }
-    //         }
-    //     }
-
-    //     glBegin(GL_TRIANGLES);
-    //     for (unsigned i = 0; i < surface.VF.size(); i++) { // 设置好顶点和顶点的法向量后，OpenGL就可以对其进行三角形面片绘制
-    //         glNormal3fv(surface.VN[std::get<0>(surface.VF[i])]);
-    //         glVertex3fv(surface.VV[std::get<0>(surface.VF[i])]);
-    //         glNormal3fv(surface.VN[std::get<1>(surface.VF[i])]);
-    //         glVertex3fv(surface.VV[std::get<1>(surface.VF[i])]);
-    //         glNormal3fv(surface.VN[std::get<2>(surface.VF[i])]);
-    //         glVertex3fv(surface.VV[std::get<2>(surface.VF[i])]);
-    //     }
-    //     glEnd();
-    // }
 };
 
 #endif //REVSURFACE_HPP

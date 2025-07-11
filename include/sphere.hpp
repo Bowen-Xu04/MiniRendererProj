@@ -15,7 +15,6 @@ public:
     Sphere() : center(Vector3f(0.0)), radius(1.0) { // unit ball at the center
         id = primitive_cnt++;
         type = OBJECT_TYPE::SPHERE;
-        //objects.push_back(this);
         box = calculate_box();
         area = calculate_area();
     }
@@ -23,14 +22,12 @@ public:
     Sphere(const Vector3f& _center, float _radius, Material* material) : Object3D(material), center(_center), radius(_radius) {
         id = primitive_cnt++;
         type = OBJECT_TYPE::SPHERE;
-        //objects.push_back(this);
         box = calculate_box();
         area = calculate_area();
     }
 
     ~Sphere() override {
         primitive_cnt--;
-        //objects.erase(objects.begin() + id);
     }
 
     float calculate_area() {

@@ -28,7 +28,6 @@ public:
     }
 
     Hit(const Hit& h) {
-        //printf("???\n");
         id = h.id;
         mesh_id = h.mesh_id;
         t = h.t;
@@ -53,10 +52,6 @@ public:
     int get_mesh_id() const {
         return mesh_id;
     }
-
-    // int get_mesh_id_begin() const {
-    //     return mesh_id_begin;
-    // }
 
     float getT() const {
         return t;
@@ -87,7 +82,6 @@ public:
     }
 
     void set(int _id, float _t, Material* m, const Vector3f& _point, const Vector3f& n) {
-        //printf("set: %d\n", _id);
         id = _id;
         t = _t;
         material = m;
@@ -97,9 +91,7 @@ public:
     }
 
     void set_mesh_id(int _mesh_id) {
-        //printf("set_mesh_id: %d\n", _mesh_id);
         mesh_id = _mesh_id;
-        //mesh_id_begin = _mesh_id_begin;
     }
 
     void set_barycentricCoords(const Vector3f& coords) {
@@ -131,7 +123,6 @@ private:
 
     int id; // object id
     int mesh_id; // triangle-mesh id
-    //int mesh_id_begin; // triangle-mesh的三角形的id_begin
 
 };
 

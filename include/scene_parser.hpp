@@ -69,8 +69,6 @@ private:
     float readFloat();
     int readInt();
 
-    //void calc_light_area();
-
 public:
 
     SceneParser() = delete;
@@ -92,7 +90,6 @@ public:
 
     Light* getLight(int i) const {
         assert(i >= 0 && i < num_lights);
-        //printf("<%d,%d>\n", i, num_lights);
         return lights[i];
     }
 

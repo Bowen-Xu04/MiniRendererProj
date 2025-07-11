@@ -35,18 +35,9 @@ protected:
 
     MaterialData materialData;
     std::shared_ptr<Texture2D> diffuseTexture2D, normalTexture2D;
-    // Vector3f emission;
-    // Vector3f diffuseColor;
-    // Vector3f specularColor;
-    // float shininess;
 
 public:
-
     Material() {}
-
-    // explicit Material(const Vector3f& d_color, const Vector3f& s_color = Vector3f::ZERO, float s = 0) :
-    //     diffuseColor(d_color), specularColor(s_color), shininess(s) {
-    // }
 
     virtual ~Material() = default;
 
@@ -70,10 +61,6 @@ public:
         return type;
     }
 
-    // bool is_PBRMaterial() const {
-    //     return type == MATERIAL_TYPE::DIFFUSE;
-    // }
-
     bool normalTextureEnabled() const {
         return materialData.enable_normal_texture;
     }
@@ -96,15 +83,10 @@ public:
 
     Vector3f getDiffuseColor(const Hit& h) const {
         if (has_diffuse_texture() && materialData.enable_diffuse_texture) { // 此时交点一定位于三角网格上
-            //std::cout << materialData.diffuse_texname << std::endl;
             if (diffuseTexture2D == nullptr) {
                 printf("ERROR: No diffuseTexture2D.\n");
                 exit(1);
             }
-            // if (h.get_mesh_id() == -1) {
-            //     printf("!!!\n");
-            // }
-            // printf("samp\n");
             return diffuseTexture2D->sample(h.get_texCoords());
         }
 
@@ -112,15 +94,11 @@ public:
     }
 
     Vector3f getNormal(const Hit& h) const {
-        //if (has_normal_texture()) { // 此时交点一定位于三角网格上
         if (normalTexture2D == nullptr) {
             printf("ERROR: No normalTexture2D.\n");
             exit(1);
         }
         return 2 * normalTexture2D->sample(h.get_texCoords()) - Vector3f(1.f, 1.f, 1.f);
-        // }
-
-        // return h.getNormal();
     }
 
     bool has_diffuse_texture() const { return materialData.diffuse_texname != ""; }
@@ -128,13 +106,6 @@ public:
     bool has_normal_texture() const { return materialData.normal_texname != ""; }
 
     bool has_texture() const { return has_diffuse_texture() | has_normal_texture(); }
-
-    //virtual Ray calculate_new_ray(const Ray& ray, const Hit& hit) const { return Ray(Vector3f::ZERO, Vector3f::UP); }
-
-    // virtual Vector3f Shade(const Ray& ray, const Hit& hit, const Vector3f& dirToLight, const Vector3f& lightColor) = 0;
-    // virtual Vector3f Shade(const Ray& ray, const Hit& hit, const Vector3f& dirToLight, const Vector3f& lightColor, const Vector2f& texCoords) {
-    //     return Vector3f::ZERO;
-    // }
 
     virtual float pdf(const Vector3f& wi, const Vector3f& N) const {
         // 独立实现
@@ -166,7 +137,7 @@ public:
                 C = Vector3f(0.0f, N.z() * invLen, -N.y() * invLen);
             }
             B = Vector3f::cross(C, N);
-            //printf(">>>\n");
+
             return localRay.x() * B + localRay.y() * C + localRay.z() * N;
         }
         // 参考已有代码：GAMES101作业框架
@@ -186,7 +157,7 @@ public:
                 C = Vector3f(0.0f, N.z() * invLen, -N.y() * invLen);
             }
             B = Vector3f::cross(C, N);
-            //printf(">>>\n");
+
             return localRay.x() * B + localRay.y() * C + localRay.z() * N;
         }
     }
@@ -195,11 +166,7 @@ public:
     // 并未考虑cos项。cos项在渲染过程中单独计算，最终和其他值乘在一起
     virtual Vector3f evalBSDF(const Vector3f& wi, const Vector3f& wo, const Hit& h) const = 0;
 
-    // virtual Vector3f evalBRDF(const Vector3f& wi, const Vector3f& wo, const Vector3f& N, const Vector2f& texCoords) const { return Vector3f::ZERO; }
-
     virtual Vector3f evalBSDF_Whitted(const Vector3f& wi, const Vector3f& wo, const Hit& h) const = 0;
-
-    // virtual Vector3f evalBRDF_Whitted(const Vector3f& wi, const Vector3f& wo, const Vector3f& N, const Vector2f& texCoords) const { return Vector3f::ZERO; }
 };
 
 // 独立实现
@@ -209,7 +176,6 @@ public:
 // 之后可能会改进
 class PhongMaterial : public Material {
 public:
-
     PhongMaterial(const Vector3f& _emission, const Vector3f& d_color, const Vector3f& s_color = Vector3f::ZERO, float s = 0) {
         id = material_cnt++;
         materials.push_back(this);
@@ -223,10 +189,6 @@ public:
         materialData.shininess = s;
         materialData.transparent = 0.f;
         materialData.dissolve = 1.f;
-        // printf("PhongMaterial: ");
-        // printvec3(diffuseColor);
-        // printvec3(specularColor);
-        // printf("\n");
     }
 
     PhongMaterial(const MaterialData& _materialData) {
@@ -265,92 +227,18 @@ public:
         }
     }
 
-    // Vector3f getDiffuseColor() const {
-    //     return diffuseColor;
-    // }
-    // Vector3f getSpecularColor() const {
-    //     return specularColor;
-    // }
-    // Vector3f getShininess() const {
-    //     return shininess;
-    // }
-    // Vector3f Shade(const Ray& ray, const Hit& hit, const Vector3f& dirToLight, const Vector3f& lightColor) override {
-    //     Vector3f shaded = Vector3f::ZERO;
-    //     Vector3f r = (2 * Vector3f::dot(hit.getNormal(), dirToLight) * hit.getNormal() - dirToLight).normalized();
-    //     shaded += materialData.diffuse * std::max(0.f, Vector3f::dot(dirToLight, hit.getNormal()));
-    //     shaded += materialData.specular * std::pow(std::max(0.f, Vector3f::dot(-ray.getDirection(), r)), materialData.shininess);
-    //     // printf("[");
-    //     // printvec3(lightColor); printf("%f", Vector3f::dot(dirToLight, hit.getNormal()));
-    //     // printf("]\n");
-    //     return lightColor * shaded;
-    // }
-    // Vector3f Shade(const Ray& ray, const Hit& hit, const Vector3f& dirToLight, const Vector3f& lightColor, const Vector2f& texCoords) {
-    // }
-
-    // // 参考已有代码：GAMES101作业框架
-    // Vector3f sampleBSDF(const Vector3f& wo, const Vector3f& N) const override { // 在半球面上均匀采样（仅光线追踪）
-    //     float x_1 = get_random_float(), x_2 = get_random_float();
-    //     float z = std::fabs(1.0f - 2.0f * x_1);
-    //     float r = std::sqrt(1.0f - z * z), phi = 2 * M_PI * x_2;
-    //     Vector3f localRay(r * std::cos(phi), r * std::sin(phi), z);
-    //     Vector3f B, C;
-    //     if (std::fabs(N.x()) > std::fabs(N.y())) {
-    //         float invLen = 1.0f / std::sqrt(N.x() * N.x() + N.z() * N.z());
-    //         C = Vector3f(N.z() * invLen, 0.0f, -N.x() * invLen);
-    //     }
-    //     else {
-    //         float invLen = 1.0f / std::sqrt(N.y() * N.y() + N.z() * N.z());
-    //         C = Vector3f(0.0f, N.z() * invLen, -N.y() * invLen);
-    //     }
-    //     B = Vector3f::cross(C, N);
-    //     //printf(">>>\n");
-    //     return localRay.x() * B + localRay.y() * C + localRay.z() * N;
-    // }
-
     Vector3f evalBSDF(const Vector3f& wi, const Vector3f& wo, const Hit& h) const override {
-        // Vector3f diffuseColor = materialData.diffuse;
-        // if (has_diffuse_texture()) {
-        //     assert(texture2d != nullptr);
-        //     diffuseColor = texture2d->sample();
-        // }
-
-        //return getDiffuseColor(h);
         return Vector3f::dot(h.getFaceNormal(), wo) > 0.f ? getDiffuseColor(h) * M_1_PI : Vector3f::ZERO;
     }
 
-    // Vector3f evalBRDF(const Vector3f& wi, const Vector3f& wo, const Vector3f& N, const Vector2f& texCoords) const override {
-    //     return Vector3f::dot(N, wo) > 0.f ? materialData.diffuse * M_1_PI : Vector3f::ZERO;
-    // }
-
     Vector3f evalBSDF_Whitted(const Vector3f& wi, const Vector3f& wo, const Hit& h) const override { // Whitted-style的BRDF，考虑了物体的高光
-        // Vector3f diffuseColor = materialData.diffuse;
-        // if (has_diffuse_texture()) {
-        //     assert(texture2d != nullptr);
-        //     diffuseColor = texture2d->sample();
-        // }
-        //printf("e1\n");
         Vector3f brdf = Vector3f::ZERO;
         Vector3f r = (2 * Vector3f::dot(h.getNormal(), wi) * h.getNormal() - wi).normalized();
         brdf += getDiffuseColor(h) * std::max(0.f, Vector3f::dot(wi, h.getNormal()));
         brdf += materialData.specular * std::pow(std::max(0.f, Vector3f::dot(wo, r)), materialData.shininess);
-        //printf("e2\n");
-        // if (has_diffuse_texture()) {
-        //     printvec3(getDiffuseColor(h) * std::max(0.f, Vector3f::dot(wi, h.getNormal())));
-        //     printvec3(materialData.specular * std::pow(std::max(0.f, Vector3f::dot(wo, r)), materialData.shininess));
-        //     printf("\n");
-        // }
+
         return brdf;
     }
-
-    // Vector3f evalBRDF_Whitted(const Vector3f& wi, const Vector3f& wo, const Vector3f& N, const Vector2f& texCoords) const override { // Whitted-style的BRDF，考虑了物体的高光
-    //     Vector3f brdf = Vector3f::ZERO;
-    //     Vector3f r = (2 * Vector3f::dot(N, wi) * N - wi).normalized();
-    //     brdf += materialData.diffuse * std::max(0.f, Vector3f::dot(wi, N));
-    //     brdf += materialData.specular * std::pow(std::max(0.f, Vector3f::dot(wo, r)), materialData.shininess);
-
-    //     return brdf;
-    // }
-
 };
 
 // 独立实现
@@ -369,7 +257,6 @@ private:
     }
 
 public:
-
     GlossyMaterial(const Vector3f& _emission, const Vector3f& _albedo, float r, float m) {
         id = material_cnt++;
         materials.push_back(this);
@@ -430,14 +317,6 @@ public:
         materialData.dissolve = 1.f - tr;
     }
 
-    // Ray calculate_new_ray(const Ray& ray, const Hit& hit) const { // ray从相机/上一个交点指向当前交点
-    //     Vector3f new_dir;
-    //     float cos_theta_I = Vector3f::dot(ray.getDirection(), hit.getNormal());
-    //     new_dir = ray.getDirection() - 2 * cos_theta_I * hit.getNormal();
-    //     new_dir.normalize();
-    //     return Ray(hit.getPoint(), new_dir);
-    // }
-
     float pdf(const Vector3f& wi, const Vector3f& N) const override {
         return 1.f;
     }
@@ -451,12 +330,8 @@ public:
     }
 
     Vector3f evalBSDF_Whitted(const Vector3f& wi, const Vector3f& wo, const Hit& h) const override {
-        return materialData.transmittance; // *std::max(0.f, Vector3f::dot(wi, h.getNormal())); // 此时一定没有纹理贴图
+        return materialData.transmittance;
     }
-
-    // Vector3f Shade(const Ray& ray, const Hit& hit, const Vector3f& dirToLight, const Vector3f& lightColor) {
-    //     return Vector3f::ZERO;
-    // }
 };
 
 
@@ -479,27 +354,6 @@ public:
         materialData.dissolve = 1.f - tr;
     }
 
-    // Ray calculate_new_ray(const Ray& ray, const Hit& hit) const { // 潜在的问题：两个折射率不等的透明物体紧挨在一起，无法实现光线穿过第二个物体的效果
-    //     // ray从相机/上一个交点指向当前交点
-    //     Vector3f new_dir = Vector3f::ZERO;
-    //     float cos_theta_I = Vector3f::dot(ray.getDirection(), hit.getNormal());
-    //     float inv_relative_refractive_index = cos_theta_I >= 0.f ? materialData.ior : 1.f / materialData.ior; //出射介质相对入射介质的相对折射率的倒数，等于=ri_入射/ri_出射
-    //     float temp = (1 - cos_theta_I * cos_theta_I) * inv_relative_refractive_index * inv_relative_refractive_index;
-    //     if (temp >= 0.f && temp <= 1.f) { //发生折射
-    //         float cos_theta_T = std::sqrt(1.f - temp);
-    //         //printf("[REFRA %f %f %f] ", inv_relative_refractive_index, cos_theta_I, cos_theta_T);
-    //         //printvec3(ray.getDirection()); printvec3(hit.getNormal());
-    //         new_dir = inv_relative_refractive_index * ray.getDirection()
-    //             + (inv_relative_refractive_index * std::fabs(cos_theta_I) - cos_theta_T) * hit.getNormal();
-    //     }
-    //     else { //发生全反射
-    //         new_dir = ray.getDirection() - 2 * cos_theta_I * hit.getNormal();
-    //     }
-    //     new_dir.normalize();
-    //     //printvec3(ray.getDirection()); printvec3(new_dir); printf("\n");
-    //     return Ray(hit.getPoint(), new_dir);
-    // }
-
     float pdf(const Vector3f& wi, const Vector3f& N) const override {
         return 1.f;
     }
@@ -513,18 +367,12 @@ public:
 
         if (temp >= 0.f && temp <= 1.f) { //发生折射
             float cos_theta_T = std::sqrt(1.f - temp);
-            //printf("[REFRA %f %f %f] ", inv_relative_refractive_index, cos_theta_I, cos_theta_T);
-            //printvec3(ray.getDirection()); printvec3(hit.getNormal());
             return ((inv_relative_refractive_index * std::fabs(cos_theta_I) - cos_theta_T) * N
                 - inv_relative_refractive_index * wo).normalized();
         }
 
         //发生全反射
         return (2 * cos_theta_I * N - wo).normalized();
-
-        // new_dir.normalize();
-        // //printvec3(ray.getDirection()); printvec3(new_dir); printf("\n");
-        //return Ray(hit.getPoint(), new_dir);
     }
 
     Vector3f evalBSDF(const Vector3f& wi, const Vector3f& wo, const Hit& h) const override {
@@ -532,21 +380,8 @@ public:
     }
 
     Vector3f evalBSDF_Whitted(const Vector3f& wi, const Vector3f& wo, const Hit& h) const override {
-        return materialData.transmittance; // *std::max(0.f, Vector3f::dot(wi, h.getNormal())); // 此时一定没有纹理贴图
+        return materialData.transmittance;
     }
-
-    // Vector3f Shade(const Ray& ray, const Hit& hit, const Vector3f& dirToLight, const Vector3f& lightColor) {
-    //     return Vector3f::ZERO;
-    // }
 };
-
-// class DiffuseMaterial : public Material {
-
-// };
-
-// class MicrofacetMaterial : public Material {
-
-// };
-
 
 #endif // MATERIAL_H

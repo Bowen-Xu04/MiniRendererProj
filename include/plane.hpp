@@ -21,13 +21,11 @@ public:
     Plane(const Vector3f& _normal, float _d, Material* m) : Object3D(m), normal(_normal.normalized()), d(_d) {
         id = primitive_cnt++;
         type = OBJECT_TYPE::PLANE;
-        //objects.push_back(this);
         box = calculate_box();
     }
 
     ~Plane() override {
         primitive_cnt--;
-        //objects.erase(objects.begin() + id);
     }
 
     bool intersect(const Ray& r, Hit& h) override {

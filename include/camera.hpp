@@ -60,7 +60,6 @@ public:
     Vector3f get_center() const { return center; }
     Vector3f get_direction() const { return direction; }
     Vector3f get_up() const { return up; }
-    //Vector3f get_horizontal() const { return horizontal; }
     Matrix3f get_rotation_matrix() const { return rotation_matrix; }
 
     virtual Vector3f get_perspectiveData() const {
@@ -95,15 +94,11 @@ public:
     {
         // angle is in radian.z
         invfy = 2.0 * tan(angle / 2.0) / height;
-        //invfx=2*tan(angle/2)/width;
         invfx = invfy;
-        //rotation_matrix = Matrix3f(this->horizontal, -this->up, this->direction);
     }
 
     Ray generateRay(const Vector2f& point) override {
         Vector3f dir = Vector3f((point.x() - width * 0.5) * invfx, (height * 0.5 - point.y()) * invfy, 1.f).normalized();
-        //printvec3(dir); printf("\n");
-        //printf("(%f,%f,1.0)\n",(point.x()-width*0.5)*invfx, (height*0.5-point.y())*invfy);
         return Ray(center, (rotation_matrix * dir).normalized());
     }
 

@@ -69,11 +69,6 @@ public:
             box0_p1[i] = temp.xyz() / temp.w();
         }
 
-        // Vector3f p1 = (transform * Vector4f(box0.get_pMin(), 1.f)).xyz();
-        // Vector3f p2 = (transform * Vector4f(box0.get_pMax(), 1.f)).xyz();
-        //printvec3(box0.get_pMin()); printvec3(box0.get_pMax()); printf("\n");
-        //printvec3(p1); printvec3(p2); printf("\n");
-
         Vector3f pMin(INF, INF, INF), pMax(-INF, -INF, -INF);
 
         for (int i = 0;i < 8;i++) {
@@ -85,53 +80,30 @@ public:
             pMax.z() = std::max(pMax.z(), box0_p1[i].z());
         }
 
-        //printvec3(pMin); printvec3(pMax); printf("\n");
-
         return AABB(pMin, pMax);
     }
 
     float calculate_area() {
-        assert(o != nullptr);
+        if (o == nullptr) {
+            printf("ERROR: Object to be transformed is nullptr.\n");
+            exit(1);
+        }
+
         return ampli_coeff * o->get_area();
     }
 
     void sample(Hit& h) override {
         Hit temp_h;
         o->sample(temp_h);
-        // if (!material->hasEmission()) {
-        //     printf("!!!\n");
-        // }
         h.set(o->get_id(), MAXT, material, transformPoint(transform, temp_h.getPoint()), transformDirection(transform, temp_h.getNormal()).normalized());
-        //printf("SAMP "); printvec3(temp_h.getPoint()); printvec3(h.getPoint()); printf("\n");
         h.set_mesh_id(temp_h.get_mesh_id());
         h.set_barycentricCoords(temp_h.get_barycentricCoords());
         h.set_texCoords(temp_h.get_texCoords());
     }
 
     void appendTriangleData(TriangleData& triangleData) override {
-        //printf("transform\n");
         o->apply_transform(transform);
-        //box = calculate_box();
-        //TriangleData temp;
         o->appendTriangleData(triangleData);
-
-        // printf("===========\n");
-        // temp.printInfo();
-        // printf("===========\n");
-
-        //triangleData.vertexIndices.insert(triangleData.vertexIndices.end(), temp.vertexIndices.begin(), temp.vertexIndices.end());
-
-        // for (int i = 0;i < temp.vertices.size() / 3;i++) {
-        //     Vector3f new_location = transformPoint(transform, Vector3f(temp.vertices[3 * i], temp.vertices[3 * i + 1], temp.vertices[3 * i + 2]));
-        //     triangleData.vertices.push_back(new_location.x());
-        //     triangleData.vertices.push_back(new_location.y());
-        //     triangleData.vertices.push_back(new_location.z());
-        // }
-
-        // for (auto triangle : temp.triangles) {
-        //     //triangle->
-        //     triangleData.triangles.push_back(triangle);
-        // }
     }
 
 protected:

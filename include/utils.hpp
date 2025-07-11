@@ -99,28 +99,10 @@ struct TriangleData {
     void printInfo() {
         printf("Total vertex indices: %d\n", vertexIndices.size());
         printf("Total emissive vertex indices: %d\n", emissive_vertexIndices.size());
-        //printf("%d %d %d %d\n", vertexIndices[4], vertexIndices[5], vertexIndices[6], vertexIndices[7]);
         printf("Total vertex coords: %d\n", vertices.size());
         printf("Total triangles: %d\n", triangles.size());
-        //printf("%f %f %f\n", vertices[3], vertices[4], vertices[5]);
         printf("Total texture indices: %d\n", texIndices.size());
         printf("Total texture coords: %d\n", texCoords.size());
-
-        // printf("========vertexIndices\n");
-        // for (int i = 0;i < vertexIndices.size() / 4;i++) {
-        //     printf("#%d (%d %d %d) [%d]\n", i, vertexIndices[4 * i], vertexIndices[4 * i + 1], vertexIndices[4 * i + 2], vertexIndices[4 * i + 3]);
-        // }
-
-        // printf("========emissive_vertexIndices\n");
-        // for (int i = 0;i < emissive_vertexIndices.size() / 4;i++) {
-        //     printf("#%d (%d %d %d) [%d]\n", i, emissive_vertexIndices[4 * i], emissive_vertexIndices[4 * i + 1], emissive_vertexIndices[4 * i + 2], emissive_vertexIndices[4 * i + 3]);
-        // }
-
-        // printf("========vertices\n");
-        // for (int i = 0;i < vertices.size() / 3;i++) {
-        //     printf("#%d (%f,%f,%f)\n", i, vertices[3 * i], vertices[3 * i + 1], vertices[3 * i + 2]);
-        // }
-        //for(int i=0;i<)
     }
 };
 
@@ -138,7 +120,7 @@ struct MaterialData {
     float transparent; // = 1.0 - dissolve
     int illum;
 
-    //PBR Extension，目前尚不支持mtl读入
+    //PBR Extension
     Vector3f albedo;
     Vector3f F0;
     float roughness;
@@ -178,13 +160,5 @@ void gamma_correction(Vector3f& color);
 void UpdateProgress(int percent);
 
 void printvec3(const Vector3f& vec);
-
-//void throw_error(const char* info);
-
-//void hhh();
-
-// const float EPI = 1e-5;
-// const float INF = 1e38;
-// const float MAXT = INF;
 
 #endif

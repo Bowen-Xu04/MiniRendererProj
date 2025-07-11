@@ -16,8 +16,6 @@
 #include "sampler.hpp"
 #include "shader.hpp"
 
-//using namespace std;
-
 std::string inputFile, outputFile;
 Renderer* renderer;
 int spp = 1, MSAA = 1;
@@ -282,164 +280,9 @@ void parse_argument(int argc, char* argv[]) {
         }
     }
 #endif
-
-    // assert(argc == 5 || argc == 7);
-    // for (int argNum = 1; argNum < argc; ++argNum) {
-    //     std::cout << "Argument " << argNum << " is: " << argv[argNum] << std::endl;
-    // }
-    // inputFile = argv[1];
-    // outputFile = argv[2];  // only bmp is allowed.   
-    // if (std::string(argv[3]) == "Whitted") {
-    //     assert(argc == 5);
-    //     mode = RENDERING_MODE::WHITTED;
-    // }
-    // else if (std::string(argv[3]) == "RayTracing") {
-    //     assert(argc == 7);
-    //     if (std::string(argv[4]) == "CPU") {
-    //         mode = RENDERING_MODE::PATH_TRACING_CPU;
-    //         device = DEVICE::CPU;
-    //     }
-    //     else if (std::string(argv[4]) == "GPU") {
-    //         mode = RENDERING_MODE::PATH_TRACING_GPU;
-    //         device = DEVICE::GPU;
-    //     }
-    //     else {
-    //         std::cout << "Unknown device." << std::endl;
-    //         exit(1);
-    //     }
-    //     if (sscanf(argv[5], "%d", &spp) == EOF) {
-    //         std::cout << "Invalid spp." << std::endl;
-    //         exit(1);
-    //     }
-    // }
-    // else {
-    //     std::cout << "Unknown rendering mode." << std::endl;
-    //     exit(1);
-    // }
 }
 
 int main(int argc, char* argv[]) {
-
-    // glfwInit();
-    // glfwWindowHint(GLFW_CONTEXT_VERSION_MAJOR, 3);
-    // glfwWindowHint(GLFW_CONTEXT_VERSION_MINOR, 3);
-    // glfwWindowHint(GLFW_OPENGL_PROFILE, GLFW_OPENGL_CORE_PROFILE);
-    // glfwWindowHint(GLFW_OPENGL_FORWARD_COMPAT, GL_TRUE);
-    // GLFWwindow* window = glfwCreateWindow(800, 600, "LearnOpenGL", NULL, NULL);
-    // if (window == NULL)
-    // {
-    //     std::cout << "Failed to create GLFW window" << std::endl;
-    //     glfwTerminate();
-    //     return -1;
-    // }
-    // glfwMakeContextCurrent(window);
-    // if (!gladLoadGLLoader((GLADloadproc)glfwGetProcAddress))
-    // {
-    //     std::cout << "Failed to initialize GLAD" << std::endl;
-    //     return -1;
-    // }
-    // float vertices[] = {
-    //     0.5f, 0.5f, 0.0f,   // 右上角
-    //     0.5f, -0.5f, 0.0f,  // 右下角
-    //     -0.5f, -0.5f, 0.0f, // 左下角
-    //     -0.5f, 0.5f, 0.0f   // 左上角
-    // };
-    // unsigned int indices[] = {
-    //     // 注意索引从0开始! 
-    //     // 此例的索引(0,1,2,3)就是顶点数组vertices的下标，
-    //     // 这样可以由下标代表顶点组合成矩形
-    //     0, 1, 3, // 第一个三角形
-    //     1, 2, 3  // 第二个三角形
-    // };
-    // const char* vertexShaderSource = "#version 330 core\n"
-    //     "layout (location = 0) in vec3 aPos;\n"
-    //     "void main()\n"
-    //     "{\n"
-    //     "   gl_Position = vec4(aPos.x, aPos.y, aPos.z, 1.0);\n"
-    //     "}\0";
-    // const char* fragmentShaderSource = "#version 330 core\n"
-    //     "out vec4 FragColor;\n"
-    //     "void main()\n"
-    //     "{\n"
-    //     "    FragColor = vec4(1.0f, 0.5f, 0.2f, 1.0f);\n"
-    //     "}\0";
-    // unsigned int VBO;
-    // glGenBuffers(1, &VBO);
-    // unsigned int EBO;
-    // glGenBuffers(1, &EBO);
-    // // glBindBuffer(GL_ARRAY_BUFFER, VBO);
-    // // glBufferData(GL_ARRAY_BUFFER, sizeof(vertices), vertices, GL_STATIC_DRAW);
-    // //Shader verts("shaders/vshader.vert");
-    // Shader verts("shaders/vshader.vert", GL_VERTEX_SHADER);
-    // verts.compile();
-    // Shader frags("shaders/fshader.frag", GL_FRAGMENT_SHADER);
-    // frags.compile();
-    // // unsigned int vertexShader;
-    // // vertexShader = glCreateShader(GL_VERTEX_SHADER);
-    // // glShaderSource(vertexShader, 1, &vertexShaderSource, NULL);
-    // // glCompileShader(vertexShader);
-    // // int  success;
-    // // char infoLog[512];
-    // // glGetShaderiv(vertexShader, GL_COMPILE_STATUS, &success);
-    // // if (!success)
-    // // {
-    // //     glGetShaderInfoLog(vertexShader, 512, NULL, infoLog);
-    // //     std::cout << "ERROR::SHADER::VERTEX::COMPILATION_FAILED\n" << infoLog << std::endl;
-    // // }
-    // // unsigned int fragmentShader;
-    // // fragmentShader = glCreateShader(GL_FRAGMENT_SHADER);
-    // // glShaderSource(fragmentShader, 1, &fragmentShaderSource, NULL);
-    // // glCompileShader(fragmentShader);
-    // unsigned int shaderProgram;
-    // shaderProgram = glCreateProgram();
-    // glAttachShader(shaderProgram, verts.get_id());
-    // glAttachShader(shaderProgram, frags.get_id());
-    // glLinkProgram(shaderProgram);
-    // int success = 0;
-    // char infoLog[512] = {};
-    // glGetProgramiv(shaderProgram, GL_LINK_STATUS, &success);
-    // if (!success) {
-    //     glGetProgramInfoLog(shaderProgram, 512, NULL, infoLog);
-    //     std::cout << "ERROR::SHADER::FRAGMENT::COMPILATION_FAILED\n" << infoLog << std::endl;
-    // }
-    // unsigned int VAO;
-    // glGenVertexArrays(1, &VAO);
-    // // 1. 绑定VAO
-    // glBindVertexArray(VAO);
-    // // 2. 把顶点数组复制到缓冲中供OpenGL使用
-    // glBindBuffer(GL_ARRAY_BUFFER, VBO);
-    // glBufferData(GL_ARRAY_BUFFER, sizeof(vertices), vertices, GL_STATIC_DRAW);
-    // glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, EBO);
-    // glBufferData(GL_ELEMENT_ARRAY_BUFFER, sizeof(indices), indices, GL_STATIC_DRAW);
-    // // 3. 设置顶点属性指针
-    // glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 3 * sizeof(float), (void*)0);
-    // glEnableVertexAttribArray(0);
-    // glUseProgram(shaderProgram);
-    // glBindVertexArray(VAO);
-    // glDeleteShader(verts.get_id());
-    // glDeleteShader(frags.get_id());
-    // printf("[%d]\n", sizeof(indices) / sizeof(unsigned int));
-    // while (!glfwWindowShouldClose(window))
-    // {
-    //     processInput(window);
-    //     glClearColor(0.2f, 0.3f, 0.3f, 1.0f);
-    //     glClear(GL_COLOR_BUFFER_BIT);
-    //     glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_INT, 0);
-    //     glfwSwapBuffers(window);
-    //     glfwPollEvents();
-    // }
-    // glfwTerminate();
-    // return 0;
-    // const GLubyte* name = glGetString(GL_VENDOR); //返回负责当前OpenGL实现厂商的名字
-    // const GLubyte* biaoshifu = glGetString(GL_RENDERER); //返回一个渲染器标识符，通常是个硬件平台
-    // const GLubyte* OpenGLVersion = glGetString(GL_VERSION); //返回当前OpenGL实现的版本号
-    // //const GLubyte* gluVersion = gluGetString(GLU_VERSION); //返回当前GLU工具库版本
-    // printf("OpenGL实现厂商的名字：%s\n", name);
-    // printf("渲染器标识符：%s\n", biaoshifu);
-    // printf("OpenGL实现的版本号：%s\n", OpenGLVersion);
-    //printf("OGLU工具库版本：%s\n", gluVersion);
-    //如果是在VS上执行，需要在return前加上：system("pause");
-
     parse_argument(argc, argv);
 
     // : Main RayCasting Logic
@@ -449,7 +292,6 @@ int main(int argc, char* argv[]) {
     // the scene.  Write the color at the intersection to that
     // pixel in your output image.
 
-    //printf("[%d]\n", omp_get_max_threads());
     printf("Building scene...\n");
     SceneParser scene(inputFile.c_str(), AS, mode == RENDERING_MODE::PATH_TRACING_GPU, sampler2d_type);
     PerspectiveCamera* camera = dynamic_cast<PerspectiveCamera*>(scene.getCamera());
@@ -469,8 +311,6 @@ int main(int argc, char* argv[]) {
 #ifdef HIT_DATA
     freopen("data.txt", "w", stdout);
 #endif
-    // TriangleData triangleData;
-    // scene.getGroup()->generateTriangleData(triangleData);
 
     renderer->render(scene, img);
 
@@ -479,8 +319,6 @@ int main(int argc, char* argv[]) {
 #ifdef HIT_DATA
     freopen("CON", "w", stdout);
 #endif
-    // img.SavePPM((outputFile.substr(0, outputFile.size() - 4) + ".ppm").c_str());
-    // img.SaveTGA((outputFile.substr(0, outputFile.size() - 4) + ".tga").c_str());
 
     std::cout << "Done." << std::endl;
 

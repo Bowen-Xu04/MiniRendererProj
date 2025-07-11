@@ -18,7 +18,6 @@ public:
     virtual void getIllumination(const Vector3f& p, Vector3f& dir, Vector3f& col, float& t) const = 0;
 
     LIGHT_TYPE get_type() const { return type; }
-    //virtual Vector3f getDirection(const Vector3f& p) const = 0;
 
 protected:
     LIGHT_TYPE type;
@@ -47,12 +46,7 @@ public:
         t = MAXT;
     }
 
-    // Vector3f getDirection(const Vector3f& p) const override {
-    //     return 
-    // }
-
 private:
-
     Vector3f direction;
     Vector3f color;
 
@@ -79,12 +73,7 @@ public:
         col = color;
     }
 
-    // Vector3f getDirection(const Vector3f& p, Vector3f& dir) const override {
-
-    // }
-
 private:
-
     Vector3f position;
     Vector3f color;
 

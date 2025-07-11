@@ -50,27 +50,6 @@ public:
     Material* getMaterial() {
         return material;
     }
-
-    // void drawGL() override {
-    //     Object3D::drawGL();
-    //     glPushAttrib(GL_ALL_ATTRIB_BITS);
-    //     glDisable(GL_LIGHTING);
-    //     glColor3f(1, 1, 0);
-    //     glBegin(GL_LINE_STRIP);
-    //     for (auto & control : controls) { glVertex3fv(control); }
-    //     glEnd();
-    //     glPointSize(4);
-    //     glBegin(GL_POINTS);
-    //     for (auto & control : controls) { glVertex3fv(control); }
-    //     glEnd();
-    //     std::vector<CurvePoint> sampledPoints;
-    //     discretize(30, sampledPoints);
-    //     glColor3f(1, 1, 1);
-    //     glBegin(GL_LINE_STRIP);
-    //     for (auto & cp : sampledPoints) { glVertex3fv(cp.V); }
-    //     glEnd();
-    //     glPopAttrib();
-    // }
 };
 
 class BezierCurve : public Curve {
@@ -101,7 +80,6 @@ public:
     Vector3f calc_tangent(int part, int k, int i, float t) {
         if (k == 0) {
             return controls[part * 3 + i + 1] - controls[part * 3 + i];
-            //return controls[offset+i];
         }
         return (1 - t) * calc_tangent(part, k - 1, i, t) + t * calc_tangent(part, k - 1, i + 1, t);
     }
@@ -118,25 +96,15 @@ public:
     }
 
     void discretize(int resolution, std::vector<CurvePoint>& data) override {
-        // printf("print controls:\n");
-        // for(auto v: controls){
-        //     std::cout<<v.xyz()<<endl;
-        // }
         data.clear();
         //  (PA2): fill in data vector
         for (int part = 0;part < tot_part;part++) {
             for (int i = 0;i < resolution;i++) {
-                //Vector3f t1=calc_tangent(part*3+1,2,0,i*1.0/resolution);
-                //Vector3f t2=calc_tangent(part*3,2,0,i*1.0/resolution);
-                //printf("(%f,%f,%f)\n",tangent.x(),tangent.y(),tangent.z());
-                //data.push_back({calc_point(part,3,0,i*1.0/resolution),(t1-t2).normalized()}); 
                 data.push_back({ calc_point(part,3,0,i * 1.0 / resolution),calc_tangent(part,2,0,i * 1.0 / resolution).normalized() });
                 // 因为切向量最后都要被归一化，故不在calc_tangent的返回值前*n
             }
         }
-        //Vector3f t1=calc_tangent(tot_part*3-2,2,0,1.0);
-        //Vector3f t2=calc_tangent(tot_part*3-3,2,0,1.0);        
-        //data.push_back({calc_point(tot_part-1,3,0,1.0),(t1-t2).normalized()});     
+
         data.push_back({ calc_point(tot_part - 1,3,0,1.0),calc_tangent(tot_part - 1,2,0,1.0).normalized() });
     }
 
@@ -151,7 +119,7 @@ public:
             printf("Number of control points of BspineCurve must be more than 4!\n");
             exit(0);
         }
-        // points.size()=controls.size()=n+1为控制点的个数
+
         knots.clear();
         for (int i = 0;i <= points.size() + k;i++) { // knots.size()=n+k+2为节点的个数
             knots.push_back(i * 1.0 / (points.size() + k));
@@ -173,38 +141,34 @@ public:
         for (int j = 0;j <= 2 * k;j++) {
             B[j] = new float[k + 1];
         }
-        //printf("!!1 %d\n",part);
+
         int now = 0;
         for (int p = 0;p <= k;p++) {
-            //printf("[%d]\n",p);
             if (p == 0) {
                 for (int j = 0;j <= 2 * k;j++) {
-                    //printf("{%d,%d,%d}\n",j,k,sizeof(B)/8);
                     B[j][0] = (j == k ? 1.0 : 0.0);
                 }
-                // Bspline_{i-k+j,0}(t)=(i-k+j==i? 1:0)
             }
             else {
                 for (int j = 0;j <= 2 * k - p;j++) {
-                    //printf("{%d} (%d)\n",j,knots.size());
                     now = part - k + j;
                     B[j][p] = (t - knots[now]) / (knots[now + p] - knots[now]) * B[j][p - 1] + (knots[now + p + 1] - t) / (knots[now + p + 1] - knots[now + 1]) * B[j + 1][p - 1];
                 }
             }
         }
-        //printf("!!2\n");
+
         for (int j = 0;j <= k;j++) {
             now = part - k + j;
             T[j] = B[j][k - 1] / (knots[now + k] - knots[now]) - B[j + 1][k - 1] / (knots[now + k + 1] - knots[now + 1]);
             // 因为切向量最后都要被归一化，故不在tangent的前*k
         }
-        //printf("!!3\n");
+
         Vector3f point, tangent;
         for (int i = 0;i <= k;i++) {
             point += B[i][k] * controls[part - k + i];
             tangent += T[i] * controls[part - k + i];
         }
-        //printf("!!4\n");
+
         for (int j = 0;j <= k;j++) {
             delete[] B[j];
         }

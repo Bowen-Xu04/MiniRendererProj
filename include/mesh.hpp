@@ -70,11 +70,6 @@ struct MeshData {
 class Mesh : public Object3D {
 private:
     static std::unordered_map<std::string, std::shared_ptr<MeshData>> meshData_map;
-    //static void add_mesh(std::string path);
-    //static bool check_existance(std::string path);
-
-    //std::shared_ptr<BVH> BLAS; // 因为有可能多个mesh共享同一基本几何（即为经过transform的原mesh），故使用智能指针。下同
-    //std::shared_ptr<std::vector<Object3D*>> triangles;
 
     std::string directory, objFileName;
     int mesh_id;
@@ -87,23 +82,9 @@ private:
     bool enable_diffuse_texture;
     bool enable_normal_texture;
 
-    //void computeNormal();
-
 public:
     Mesh(const char* filename, Material* m, bool _usingAS, bool _usingGPU, bool normal_interp, bool dt, bool nt, Sampler2D::SAMPLER2D_TYPE _sampler2d_type);
     ~Mesh() { Object3D::triangle_mesh_cnt--; }
-
-    // struct TriangleIndex {
-    //     TriangleIndex() {
-    //         x[0] = 0; x[1] = 0; x[2] = 0;
-    //     }
-    //     int& operator[](const int i) { return x[i]; }
-    //     // By Computer Graphics convention, counterclockwise winding is front face
-    //     int x[3]{};
-    // };
-    // std::vector<Vector3f> v;
-    // std::vector<TriangleIndex> t;
-    // std::vector<Vector3f> n;
 
     int get_id() const override {
         return mesh_id;
@@ -132,10 +113,7 @@ public:
 
         T myData[3] = { data[myIndices[0]], data[myIndices[1]], data[myIndices[2]] };
 
-        //printf("[%d] (%f,%f,%f) (%f,%f) (%f,%f) (%f,%f)\n", h.get_id(), h.get_barycentricCoords().x(), h.get_barycentricCoords().y(), h.get_barycentricCoords().z(), texCoords[0].y(), texCoords[0].x(), texCoords[1].y(), texCoords[1].x(), texCoords[2].y(), texCoords[2].x());
-
         return h.get_barycentricCoords().x() * myData[0] + h.get_barycentricCoords().y() * myData[1] + h.get_barycentricCoords().z() * myData[2];
-
     }
 
     void print_info() override {

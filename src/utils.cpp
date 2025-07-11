@@ -79,15 +79,10 @@ void loadObj(std::string filename, std::vector<int>& _vertexIndices, std::vector
 
     std::cout << "Loading object file: " << filename << "..." << std::endl;
 
-    // v = std::move(attrib.vertices);
-    // n = std::move(attrib.normals);
-    //assert(shapes.size() == 1);
-
     for (int k = 0; k < shapes.size(); ++k) { // 遍历所有shape
         int offset = 0;
 
         for (int i = 0; i < shapes[k].mesh.num_face_vertices.size(); ++i) { // 遍历shape的所有面
-            //printf("face %d:\n", i);
             int fv = shapes[k].mesh.num_face_vertices[i];
             assert(fv == 3);
 
@@ -95,18 +90,7 @@ void loadObj(std::string filename, std::vector<int>& _vertexIndices, std::vector
                 tinyobj::index_t idx = shapes[k].mesh.indices[offset + j];
                 _vertexIndices.push_back(idx.vertex_index);
                 _normalIndices.push_back(idx.normal_index);
-                //printf("vert %d:\n[%d,%d] ", j, idx.vertex_index, idx.texcoord_index);
                 _texIndices.push_back(idx.texcoord_index);
-
-                // _triangleIndices.push_back(
-                //     { attrib.vertices[3 * idx.vertex_index],attrib.vertices[3 * idx.vertex_index + 1],attrib.vertices[3 * idx.vertex_index + 2] });
-                // printvec3(_triangleIndices[_triangleIndices.size() - 1]);
-                // printf("\n");
-                // if (idx.texcoord_index >= 0) { // >=0，若有指定material，且material有指定纹理
-                //     _texCoords.push_back(
-                //         { attrib.texcoords[2 * idx.texcoord_index],attrib.texcoords[2 * idx.texcoord_index + 1] });
-                //     //printf("(%f,%f)\n", _texCoords[_texCoords.size() - 1].x(), _texCoords[_texCoords.size() - 1].y());
-                // }
             }
 
             _material_ids.push_back(shapes[k].mesh.material_ids[i]);
@@ -124,7 +108,6 @@ void loadObj(std::string filename, std::vector<int>& _vertexIndices, std::vector
 
     for (int i = 0;i < attrib.texcoords.size() / 2;i++) {
         _texCoords.push_back(Vector2f(attrib.texcoords[2 * i], attrib.texcoords[2 * i + 1]));
-        //printf("tex %d: (%f,%f)\n", i, _texCoords[_texCoords.size() - 1].x(), _texCoords[_texCoords.size() - 1].y());
     }
 
     _materials.resize(materials.size());
@@ -153,7 +136,7 @@ unsigned char* readImageFromFile(std::string filename, int& width, int& height, 
 
     stbi_set_flip_vertically_on_load(flip_y);
     unsigned char* data = stbi_load(filename.c_str(), &width, &height, &channels, 0);
-    //printf("[%d %d %d]\n", data[0], data[1], data[2]);
+
     if (data == nullptr) {
         std::cout << "ERROR: Failed to read image file " << filename << std::endl;
         exit(1);
@@ -166,20 +149,6 @@ unsigned char* readImageFromFile(std::string filename, int& width, int& height, 
     printf("Width: %d\nHeight: %d\nChannels: %d\n", width, height, channels);
 
     return data;
-
-    // texture = new Vector3f * [height];
-    // int now = 0;
-
-    // for (int i = 0;i < height;i++) {
-    //     texture[i] = new Vector3f[width];
-    //     for (int j = 0;j < width;j++) {
-    //         texture[i][j] = Vector3f(((float)data[now] / 255), ((float)data[now + 1] / 255), ((float)data[now + 2] / 255));
-    //         //printf("[%d][%d] ", i, j); printvec3(texture[i][j]); printf("\n");
-    //         now += channels;
-    //     }
-    // }
-
-    // stbi_image_free(data);
 }
 
 void clamp(Vector3f& a) {
@@ -218,7 +187,6 @@ void gamma_correction(Vector3f& color) {
 }
 
 void UpdateProgress(int percent) { // percent为[0,100]内的整数
-    //printf("+++\n");
 #ifndef HIT_DATA
     int barWidth = 100;
     printf("Progress: [");
@@ -235,10 +203,3 @@ void UpdateProgress(int percent) { // percent为[0,100]内的整数
 void printvec3(const Vector3f& vec) {
     printf("(%f,%f,%f) ", vec.x(), vec.y(), vec.z());
 }
-
-// void throw_error(const char* info) {
-//     printf("ERROR: %s\n", info);
-//     exit(1);
-// }
-
-//void hhh() {}

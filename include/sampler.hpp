@@ -31,15 +31,10 @@ public:
         for (int i = 0; i < 2; i++) {
             for (int j = 0; j < 2; j++) {
                 int nowx = std::max(0, std::min(x + i, height - 1)), nowy = std::max(0, std::min(y + j, width - 1));
-                // if (nowy < 0 || nowy >= height || nowx < 0 || nowx >= width) {
-                //     printf("%d %d !!!\n", nowy, nowx);
-                // }
                 color[i][j] = texture[nowy][nowx]; // 注意：texture的存储格式为(纵坐标, 横坐标)
             }
         }
-        //Vector3f col =         // printf("sample: ");
-        // printvec3(col);
-        // printf("\n");
+
         return (color[0][0] * (1 - dx) + color[0][1] * dx) * (1 - dy) + (color[1][0] * (1 - dx) + color[1][1] * dx) * dy;
     }
 };

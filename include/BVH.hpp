@@ -18,7 +18,6 @@ private:
     Node* left;
     Node* right;
     AABB box;
-    //std::vector<Object3D*>* objects;
     int l, r;
 
 public:
@@ -34,8 +33,6 @@ public:
 
 class BVH {
 private:
-    //using Point3 = Vector3f;
-
     std::function<bool(Object3D*, Object3D*)>boxcmp[3] = {
         [](Object3D* a,Object3D* b) {return a->get_box().get_center().x() < b->get_box().get_center().x();},
         [](Object3D* a,Object3D* b) {return a->get_box().get_center().y() < b->get_box().get_center().y();},
@@ -55,9 +52,8 @@ private:
     }
 
     void build_recursive(Node* now, int y) {
-        //now->objects = objects;
         int l = now->l, r = now->r;
-        //printf("[%d,%d]\n", l, r);
+
         if (l == r) {
             now->box = (*objects)[l]->get_box();
             return;
@@ -85,30 +81,21 @@ private:
     }
 
     bool intersect_recursive(Node* node, const Ray& r, Hit& h) {
-        //printf("[%d %d]\n", node->l, node->r);
         if (node == nullptr) {
             printf("ERROR: Invalid BVH node.\n");
             exit(1);
         }
 
         if (!node->box.intersect(r)) {
-            //printf("ddd\n");
             return false;
         }
-        // printf("-- [%d %d]\n", node->l, node->r);
-        // if (node->l < 0 || node->r < 0) printf("!!!!!\n");
 
         if (node->l == node->r) {
-            // if ((*objects)[node->l] == nullptr) {
-            //     printf("!!!!!!!\n");
-            // }
-            //bool k = (*objects)[node->l]->intersect(r, h);
-            //printf("<<<%d>>>\n", k);
             return (*objects)[node->l]->intersect(r, h);
         }
-        //printf("...2\n");
+
         bool left_hit = intersect_recursive(node->left, r, h), right_hit = intersect_recursive(node->right, r, h);
-        //printf("[%d %d] (%d,%d)\n", node->l, node->r, h.get_id(), h.get_mesh_id());
+
         return left_hit || right_hit;
     }
 
@@ -157,9 +144,12 @@ public:
     }
 
     void build(std::vector<Object3D*>* _objects) {
-        assert(_objects != nullptr);
+        if (_objects == nullptr) {
+            printf("ERROR: The object list is nullptr.\n");
+            exit(1);
+        }
+
         objects = _objects;
-        //printf("[[%d]]\n", objects->size());
         root = new Node(0, objects->size() - 1);
         build_recursive(root, 0);
     }

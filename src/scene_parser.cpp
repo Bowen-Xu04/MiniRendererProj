@@ -37,7 +37,6 @@ SceneParser::SceneParser(const char* filename, bool _usingAS, bool _usingGPU, Sa
 
     usingAS = _usingAS;
     usingGPU = _usingGPU;
-    //printf("usingGPU = %d\n", usingGPU);
     sampler2d_type = _sampler2d_type;
 
     // parse the file
@@ -403,8 +402,6 @@ Material* SceneParser::parseMaterial(Material::MATERIAL_TYPE type) {
     }
 
     return new PhongMaterial(Vector3f::ZERO, Vector3f(1.0, 1.0, 1.0), Vector3f::ZERO, 0.f); //default
-    //auto* answer = 
-    //return answer;
 }
 
 // ====================================================================
@@ -412,7 +409,6 @@ Material* SceneParser::parseMaterial(Material::MATERIAL_TYPE type) {
 
 Object3D* SceneParser::parseObject(char token[MAX_PARSER_TOKEN_LENGTH]) {
     Object3D* answer = nullptr;
-    //printf("%s\n", token);
     if (!strcmp(token, "Group")) {
         answer = (Object3D*)parseGroup();
     }
@@ -479,7 +475,6 @@ Group* SceneParser::parseGroup() {
             int index = readInt();
             assert(index >= 0 && index < getNumMaterials());
             current_material = getMaterial(index);
-            //printf("<%d,%d,%d>\n", index, getNumMaterials(), current_material != nullptr);
         }
         else {
             Object3D* object = parseObject(token);
@@ -593,9 +588,6 @@ Mesh* SceneParser::parseTriangleMesh() {
         }
     }
 
-    // assert(!);
-    // getToken(token);
-    // assert();
     Mesh* answer = new Mesh(filename, current_material, usingAS, usingGPU, normal_interp, dt, nt, sampler2d_type);
 
     return answer;
@@ -747,7 +739,6 @@ Transform* SceneParser::parseTransform() {
             emission_is_allowed &= ((object->get_type() == Object3D::OBJECT_TYPE::TRIANGLE) |
                 (object->get_type() == Object3D::OBJECT_TYPE::TRIANGULAR_MESH) |
                 (object->get_type() == Object3D::OBJECT_TYPE::SPHERE));
-            //printf("[%d]\n", object->get_material() != nullptr);
             break;
         }
         getToken(token);
