@@ -8,17 +8,8 @@ uniform sampler2D colorBuffer;
 
 vec3 gamma_correction(vec3 color) {
     return vec3(pow(color.x, 0.6), pow(color.y, 0.6), pow(color.z, 0.6));
-    // color.x = ;
-    // color.y = ;
-    // color.z = ;
 }
 
 void main() {
-    //pixelColor = vec3(0.1, 0.2, 0.3);
-    // if((frameCnt / 100) % 2 == 1) {
-    //     pixelColor = vec3(0, 0, 0);
-    // } else {
-    //pixelColor = vec3(0.2, 0.4, 0.6);
     pixelColor = gamma_correction(texelFetch(colorBuffer, ivec2(gl_FragCoord.xy), 0).xyz);
-    //}
 }
