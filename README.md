@@ -1,5 +1,9 @@
 # MiniRendererProj
-This is a minimal renderer based on my project of the course "Fundamentals of Computer Graphics", in which I got a grade of A. I have removed some bugs and developed some new characteristics in this new project. Feel free to try it!
+This is a minimal renderer based on my project of the course "Fundamentals of Computer Graphics", in which I got a grade of A. I am continuously removing bugs and developing new characteristics of this project. Feel free to try it!
+
+
+
+<img src=".\img\【7】scene13_eagle.bmp" alt="【7】scene13_eagle" style="zoom: 15%;" />
 
 
 
@@ -23,7 +27,7 @@ tinyobjloader
 
 
 
-### Supports
+### Features
 
 1. Whitted-Style ray tracing;
 2. Path tracing;
