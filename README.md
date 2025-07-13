@@ -3,7 +3,7 @@ This is a minimal renderer based on my project of the course "Fundamentals of Co
 
 
 
-<img src=".\img\【7】scene13_eagle.bmp" alt="【7】scene13_eagle" style="zoom: 15%;" />
+<img src=".\img\【7】scene13_eagle.bmp" alt="【7】scene13_eagle" width=256px />
 
 
 
