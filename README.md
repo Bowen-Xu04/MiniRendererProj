@@ -13,27 +13,46 @@ This is a minimal renderer based on my project of the course "Fundamentals of Co
 
 
 
-<img src="img\scene21_c_sponza_MIS_1280x800_512spp.bmp" alt="scene21_c_sponza_MIS_1280x800_512spp" width="240" />
-
-<center><div>Crytek Sponza (512spp, rendering time: 7137s)</div><div>Features: MIS, diffuse texture, normal interpolation</div></center>
 
 
+<img src="img\scene21_c_sponza_MIS_1280x800_512spp.bmp" alt="scene21_c_sponza_MIS_1280x800_512spp" align="middle" width="384" />
 
-<img src="img\teaser_test_1024x1024_MIS_512spp.bmp" alt="teaser_test_1024x1024_MIS_512spp" width="300" />
+<p align="center">
+<div>Crytek Sponza (512spp, rendering time: 7137s)</div>
+<div>Features: MIS, diffuse texture, normal interpolation</div>
+</p>
 
-<center><div>Cornell Box (512spp, rendering time: 1377s)</div><div>Features: MIS, diffuse texture, normal texture, normal interpolation, glossy material, refractive material</div></center>
 
 
 
-<img src="img\scene19_BMW_MIS_1280x800_1024spp.bmp" alt="scene19_BMW_MIS_1280x800_1024spp" width="240" />
 
-<center><div>BMW in the Auto Show (1024spp, rendering time: 3344s)</div><div>Features: MIS, diffuse texture, normal interpolation, reflective material, mesh light</div></center>
+<img src="img\teaser_test_1024x1024_MIS_512spp.bmp" alt="teaser_test_1024x1024_MIS_512spp" align="middle" width="300" />
+
+<p align="center">
+<div>Cornell Box (512spp, rendering time: 1377s)</div>
+<div>Features: MIS, diffuse texture, normal texture, normal interpolation, glossy material, refractive material</div>
+</p>
+
+
+
+
+
+<img src="img\scene19_BMW_MIS_1280x800_1024spp.bmp" alt="scene19_BMW_MIS_1280x800_1024spp" align="middle" width="384" />
+
+<p align="center">
+<div>BMW in the Auto Show (1024spp, rendering time: 3344s)</div>
+<div>Features: MIS, diffuse texture, normal interpolation, reflective material, mesh light</div>
+</p>
+
+
 
 
 
 ### Environment
 
 The code can run normally on Windows, but I am not sure whether it can also run on Linux/MacOS.
+
+
 
 
 
@@ -48,6 +67,8 @@ glfw-3.4
 stb_image
 
 tinyobjloader
+
+
 
 
 
