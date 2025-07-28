@@ -13,19 +13,19 @@ This is a minimal renderer based on my project of the course "Fundamentals of Co
 
 
 
-<img src="E:\THU-Programming\Fundamentals of Computer Graphics\Project_2022012236\MiniRendererProj\img\scene21_c_sponza_MIS_1280x800_512spp.bmp" alt="scene21_c_sponza_MIS_1280x800_512spp" style="zoom: 33%;" />
+<img src="img\scene21_c_sponza_MIS_1280x800_512spp.bmp" alt="scene21_c_sponza_MIS_1280x800_512spp" style="zoom: 33%;" />
 
 <center><div>Crytek Sponza (512spp, rendering time: 7137s)</div><div>Features: MIS, diffuse texture, normal interpolation</div></center>
 
 
 
-<img src="E:\THU-Programming\Fundamentals of Computer Graphics\Project_2022012236\MiniRendererProj\img\teaser_test_1024x1024_MIS_512spp.bmp" alt="teaser_test_1024x1024_MIS_512spp" style="zoom: 33%;" />
+<img src="img\teaser_test_1024x1024_MIS_512spp.bmp" alt="teaser_test_1024x1024_MIS_512spp" style="zoom: 33%;" />
 
 <center><div>Cornell Box (512spp, rendering time: 1377s)</div><div>Features: MIS, diffuse texture, normal texture, normal interpolation, glossy material, refractive material</div></center>
 
 
 
-<img src="E:\THU-Programming\Fundamentals of Computer Graphics\Project_2022012236\MiniRendererProj\img\scene19_BMW_MIS_1280x800_1024spp.bmp" alt="scene19_BMW_MIS_1280x800_1024spp" style="zoom: 33%;" />
+<img src="img\scene19_BMW_MIS_1280x800_1024spp.bmp" alt="scene19_BMW_MIS_1280x800_1024spp" style="zoom: 33%;" />
 
 <center><div>BMW in the Auto Show (1024spp, rendering time: 3344s)</div><div>Features: MIS, diffuse texture, normal interpolation, reflective material, mesh light</div></center>
 
