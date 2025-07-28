@@ -40,6 +40,7 @@ enum DEVICE {
 DEVICE device;
 
 Sampler2D::SAMPLER2D_TYPE sampler2d_type = Sampler2D::SAMPLER2D_TYPE::BILINEAR_SAMPLER;
+//Material::SAMPLE_TYPE material_sample_type = Material::SAMPLE_TYPE::UNIFORM;
 
 void parse_argument(int argc, char* argv[]) {
     printf("Parsing arguments...\n");
@@ -58,6 +59,7 @@ void parse_argument(int argc, char* argv[]) {
     parser.add("nee", 'n', "next event estimation");
     parser.add<std::string>("sampler", 't', "sampler of textures", false, "Bilinear", cmdline::oneof<std::string>("Bilinear", "Bicubic"));
     parser.add<float>("rr", 'p', "Russian roulette", false, 0.8);
+    parser.add<std::string>("is", 'h', "importance sampling on hemisphere", false, "uniform", cmdline::oneof<std::string>("uniform", "cos-weighted", "BRDF", "MIS"));
 
     parser.parse_check(argc, argv);
 
@@ -124,6 +126,7 @@ void parse_argument(int argc, char* argv[]) {
             exit(1);
         }
         NEE = true;
+        renderer_sample_type = RENDERER_SAMPLE_TYPE::TRIVIAL_NEE;
     }
     if (path_tracing) {
         std::cout << "as: " << NEE << std::endl;
@@ -157,10 +160,40 @@ void parse_argument(int argc, char* argv[]) {
         std::cout << "rr: " << RR << std::endl;
     }
 
+    if (parser.exist("is")) {
+        if (!path_tracing) {
+            printf("ERROR: Argument <is> is not available for Whitted-style rendering mode.\n");
+            exit(1);
+        }
+        // if (parser.get<std::string>("is") == "uniform") {
+        //     renderer_sample_type = RENDERER_SAMPLE_TYPE::UNIFORM;
+        // }
+        else if (parser.get<std::string>("is") == "cos-weighted") {
+            renderer_sample_type = RENDERER_SAMPLE_TYPE::COS_WEIGHTED;
+        }
+        else if (parser.get<std::string>("is") == "BRDF") {
+            renderer_sample_type = RENDERER_SAMPLE_TYPE::BRDF;
+        }
+        else if (parser.get<std::string>("is") == "MIS") {
+            renderer_sample_type = RENDERER_SAMPLE_TYPE::MIS;
+            if (MIS_POW != 1 && MIS_POW != 2) {
+                printf("ERROR: MIS_POW must be 1 or 2.\n");
+                exit(1);
+            }
+        }
+        else {
+            printf("ERROR: Unknown importance sampling type.\n");
+            exit(1);
+        }
+    }
+    if (path_tracing) {
+        std::cout << "is: " << parser.get<std::string>("is") << std::endl;
+    }
+
 #else
     const char* optstring = "i:o:r:d::a::s::m::n::t::p::";
     const char* usage =
-        "./build/RTProject --input: --output: --rm:\"Whitted\"/\"RayTracing\" <--device:[\"CPU\"]/\"GPU\"> <--as> <--spp:[1]> <--msaa:[1]> <--nee> <--sampler:[\"Bilinear\"]/\"Bicubic\"> <--rr:[0.8]>";
+        "./build/RTProject --input: --output: --rm:\"Whitted\"/\"RayTracing\" <--device:[\"CPU\"]/\"GPU\"> <--as> <--spp:[1]> <--msaa:[1]> <--nee> <--sampler:[\"Bilinear\"]/\"Bicubic\"> <--rr:[0.8]> <--is:[\"Uniform\"]/\"cos-weighted\"/\"BRDF\"/\"MIS\">";
 
     // const int no_argument = 0;
     // const int required_argument = 1;
@@ -177,7 +210,8 @@ void parse_argument(int argc, char* argv[]) {
         {"msaa", optional_argument, NULL, 'm'},
         {"nee", optional_argument, NULL, 'n'},
         {"sampler", optional_argument, NULL, 't'},
-        {"rr", optional_argument, NULL, 'p'}
+        {"rr", optional_argument, NULL, 'p'},
+        {"is", optional_argument, NULL, 'h'}
     };
     while ((o = getopt_long(argc, argv, optstring, options, &option_index)) != -1) {
         printf("%s: %s\n", options[option_index].name, optarg);
@@ -247,6 +281,7 @@ void parse_argument(int argc, char* argv[]) {
                 exit(1);
             }
             NEE = true;
+            renderer_sample_type = RENDERER_SAMPLE_TYPE::TRIVIAL_NEE;
             break;
         case 't':
             if (strcmp(optarg, "Bilinear") == 0) {
@@ -271,6 +306,32 @@ void parse_argument(int argc, char* argv[]) {
             }
             if (RR == 1.0) {
                 printf("WARNING: The value of RR is 1.0, which may result in endless loops.\n");
+            }
+            break;
+        case 'h':
+            if (!path_tracing) {
+                printf("ERROR: Argument <is> is not available for Whitted-style rendering mode.\n");
+                exit(1);
+            }
+            // if (strcmp(optarg, "uniform") == 0) {
+            //     renderer_sample_type = RENDERER_SAMPLE_TYPE::UNIFORM;
+            // }
+            else if (strcmp(optarg, "cos-weighted") == 0) {
+                renderer_sample_type = RENDERER_SAMPLE_TYPE::COS_WEIGHTED;
+            }
+            else if (strcmp(optarg, "BRDF") == 0) {
+                renderer_sample_type = RENDERER_SAMPLE_TYPE::BRDF;
+            }
+            else if (strcmp(optarg, "MIS") == 0) {
+                renderer_sample_type = RENDERER_SAMPLE_TYPE::MIS;
+                if (MIS_POW != 1 && MIS_POW != 2) {
+                    printf("ERROR: MIS_POW must be 1 or 2.\n");
+                    exit(1);
+                }
+            }
+            else {
+                printf("ERROR: Unknown importance sampling type.\n");
+                exit(1);
             }
             break;
         case '?':

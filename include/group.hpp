@@ -52,15 +52,19 @@ public:
 
             return result;
         }
-
-
     }
 
     void addObject(int index, Object3D* obj) {
         assert(index >= 0 && index < num_objects);
         objects[index] = obj;
 
-        if (obj->get_material()->hasEmission()) {
+        if (obj->get_type() == Object3D::OBJECT_TYPE::TRIANGULAR_MESH) {
+            std::vector<Object3D*> emi_objs = obj->get_emissive_objects();
+            if (!emi_objs.empty()) {
+                emissive_objects.insert(emissive_objects.end(), emi_objs.begin(), emi_objs.end());
+            }
+        }
+        else if (obj->get_material()->hasEmission()) {
             emissive_objects.push_back(obj);
         }
     }

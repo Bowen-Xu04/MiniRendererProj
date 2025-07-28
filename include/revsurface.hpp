@@ -17,6 +17,10 @@ public:
         id = primitive_cnt++;
         type = OBJECT_TYPE::REVSURFACE;
         box = calculate_box();
+
+        if (material != nullptr && material->hasEmission()) {
+            emissive_objects.push_back(this);
+        }
     }
 
     ~RevSurface() override {

@@ -38,6 +38,7 @@ SceneParser::SceneParser(const char* filename, bool _usingAS, bool _usingGPU, Sa
     usingAS = _usingAS;
     usingGPU = _usingGPU;
     sampler2d_type = _sampler2d_type;
+    //material_sample_type = _material_sample_type;
 
     // parse the file
     assert(filename != nullptr);
@@ -257,6 +258,7 @@ void SceneParser::parseMaterials() {
             materials[count] = parseMaterial(Material::MATERIAL_TYPE::PHONG_MATERIAL);
         }
         else if (!strcmp(token, "GlossyMaterial")) {
+            //printf("!!!\n");
             materials[count] = parseMaterial(Material::MATERIAL_TYPE::GLOSSY_MATERIAL);
         }
         else if (!strcmp(token, "ReflectiveMaterial")) {
@@ -587,7 +589,7 @@ Mesh* SceneParser::parseTriangleMesh() {
             exit(0);
         }
     }
-
+    printf("TRIMESH: %d\n", current_material->get_type() == Material::MATERIAL_TYPE::REFRACTIVE);
     Mesh* answer = new Mesh(filename, current_material, usingAS, usingGPU, normal_interp, dt, nt, sampler2d_type);
 
     return answer;
@@ -774,6 +776,7 @@ int SceneParser::getToken(char token[MAX_PARSER_TOKEN_LENGTH]) {
 Vector3f SceneParser::readVector3f() {
     float x, y, z;
     int count = fscanf(file, "%f %f %f", &x, &y, &z);
+    //printf("[%f %f %f]\n", x, y, z);
     if (count != 3) {
         printf("Error trying to read 3 floats to make a Vector3f\n");
         assert(0);

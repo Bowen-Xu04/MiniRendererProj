@@ -14,8 +14,8 @@ public:
     Triangle() = delete;
 
     // a b c are three vertex positions of the triangle
-    Triangle(const Vector3f& a, const Vector3f& b, const Vector3f& c, Material* m) : Object3D(m) {
-        id = primitive_cnt++;
+    Triangle(const Vector3f& a, const Vector3f& b, const Vector3f& c, Material* m, bool _calc_primtive_cnt = true) : Object3D(m), calc_primtive_cnt(_calc_primtive_cnt) {
+        id = (calc_primtive_cnt ? primitive_cnt++ : -1);
         type = OBJECT_TYPE::TRIANGLE;
 
         vertices[0] = a;
@@ -28,10 +28,16 @@ public:
 
         box = calculate_box();
         area = calculate_area();
+
+        if (material != nullptr && material->hasEmission()) {
+            emissive_objects.push_back(this);
+        }
     }
 
     ~Triangle() override {
-        primitive_cnt--;
+        if (calc_primtive_cnt) {
+            primitive_cnt--;
+        }
     }
 
     float calculate_area() {
@@ -128,6 +134,8 @@ protected:
     Vector3f e1, e2;
 
     int vertexIndices[3];
+
+    bool calc_primtive_cnt;
 };
 
 #endif //TRIANGLE_H

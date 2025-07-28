@@ -174,21 +174,22 @@ public:
                         finalColor += lightColor * material->evalBSDF_Whitted(L, -r.getDirection(), h);
                     }
                 }
-                finalColor += material->getEmission();
+                finalColor += material->getEmission(h);
 
                 break;
             }
             case Material::MATERIAL_TYPE::REFLECTIVE:
             case Material::MATERIAL_TYPE::REFRACTIVE: {
+                bool tag = false;
                 Hit new_hit;
-                Vector3f wi = material->sampleBSDF(-r.getDirection(), h.getNormal());
+                Vector3f wi = material->sampleBSDF(-r.getDirection(), h.getNormal(), tag);
                 Ray new_ray(h.getPoint(), wi);
 
                 if (depth < MAX_LIGHT_BOUNCE) {
                     // 此时一定没有纹理贴图
                     finalColor = castRay(new_ray, new_hit, depth + 1, true) * material->evalBSDF_Whitted(wi, -r.getDirection(), h);
                 }
-                finalColor += material->getEmission();
+                finalColor += material->getEmission(h);
 
                 break;
             }
@@ -376,9 +377,88 @@ public:
             switch (h.getMaterial()->get_type()) {
             case Material::MATERIAL_TYPE::PHONG_MATERIAL:
             case Material::MATERIAL_TYPE::GLOSSY_MATERIAL: {
-                if (NEE) {
-                    Vector3f L_dir = Vector3f::ZERO, L_indir = Vector3f::ZERO;
+                if (renderer_sample_type != RENDERER_SAMPLE_TYPE::MIS) {
+                    if (NEE) {
+                        Vector3f L_dir = Vector3f::ZERO, L_indir = Vector3f::ZERO;
 
+                        if (scene->get_light_area() > 0.f) {
+                            Hit new_hit;
+                            scene->getGroup()->sample_on_light(new_hit);
+
+                            Vector3f wi = (new_hit.getPoint() - h.getPoint()).normalized();
+                            float costheta = Vector3f::dot(h.getNormal(), wi);
+
+                            if (costheta >= 0.f) {
+                                Hit test_hit;
+                                castRay(Ray(h.getPoint(), wi), test_hit, depth + 1, false);
+
+                                if ((new_hit.getPoint() - test_hit.getPoint()).length() < EPI && (new_hit.getPoint() - h.getPoint()).length() >= EPI) {
+#ifdef HIT_DATA
+                                    printf("L(%d,%f)\n", new_hit.get_id(), (new_hit.getPoint() - h.getPoint()).length());
+#endif
+                                    L_dir = scene->get_light_area() * costheta * std::fabs(Vector3f::dot(new_hit.getNormal(), wi)) / (new_hit.getPoint() - h.getPoint()).squaredLength()
+                                        * (new_hit.getMaterial()->getEmission(new_hit) * h.getMaterial()->evalBSDF(wi, -r.getDirection(), h));
+                                }
+#ifdef HIT_DATA
+                                else {
+                                    printf("Lmiss\n");
+                                }
+#endif
+                            }
+                        }
+
+                        if (get_random_float() < RR) {
+                            bool tag = false;
+                            Vector3f wi = h.getMaterial()->sampleBSDF(-r.getDirection(), h.getNormal(), tag);
+                            float costheta = Vector3f::dot(h.getNormal(), wi); // sample出来的wi能保证costheta>=0
+                            // if (h.getMaterial()->get_type() == Material::MATERIAL_TYPE::GLOSSY_MATERIAL && costheta > 0) {
+                            //     printf("!!!\n");
+                            // }
+                            Ray new_ray(h.getPoint(), wi);
+                            Hit test_hit;
+                            castRay(new_ray, test_hit, depth + 1, false);
+
+                            if (test_hit.happened() && Vector3f::dot(h.getFaceNormal(), wi) >= 0.f) {
+                                if (!test_hit.getMaterial()->hasEmission()) {
+                                    Hit new_hit;
+                                    L_indir = invRR * costheta * (castRay(new_ray, new_hit, depth + 1, true) * h.getMaterial()->evalBSDF(wi, -r.getDirection(), h)) / h.getMaterial()->pdf(wi, -r.getDirection(), h.getNormal(), tag);
+                                }
+                            }
+                            else {
+                                L_indir = scene->getBackgroundColor();
+                            }
+                        }
+                        // if (h.getMaterial()->get_type() == Material::MATERIAL_TYPE::PHONG_MATERIAL &&
+                        //     (L_indir.x() < 0.f || L_indir.y() < 0.f || L_indir.z() < 0.f)) {
+                        //     printf("!!!\n");
+                        // }
+                        //printf("!!!\n");
+                        // if (h.getMaterial()->get_type() == Material::MATERIAL_TYPE::GLOSSY_MATERIAL) {
+                        //     printf("!!!\n");
+                        // }
+                        return h.getMaterial()->getEmission(h) + L_dir + L_indir;
+                    }
+                    else {
+                        if (get_random_float() < RR) {
+                            bool tag = false;
+                            Vector3f wi = h.getMaterial()->sampleBSDF(-r.getDirection(), h.getNormal(), tag);
+                            float costheta = Vector3f::dot(h.getNormal(), wi); // sample出来的wi能保证costheta>=0
+                            Hit new_hit;
+
+                            if (Vector3f::dot(h.getFaceNormal(), wi) >= 0.f) {
+                                return h.getMaterial()->getEmission(h) +
+                                    invRR * costheta * (castRay(Ray(h.getPoint(), wi), new_hit, depth + 1, true) * h.getMaterial()->evalBSDF(wi, -r.getDirection(), h)) / h.getMaterial()->pdf(wi, -r.getDirection(), h.getNormal(), tag);
+                            }
+                        }
+
+                        return h.getMaterial()->getEmission(h);
+                    }
+                }
+                else {
+                    float w_BRDF = 0.f, w_dL = 0.f;
+                    Vector3f L_BRDF = Vector3f::ZERO, L_dL = Vector3f::ZERO;
+
+                    // Step 1. 对光源采样
                     if (scene->get_light_area() > 0.f) {
                         Hit new_hit;
                         scene->getGroup()->sample_on_light(new_hit);
@@ -390,70 +470,73 @@ public:
                             Hit test_hit;
                             castRay(Ray(h.getPoint(), wi), test_hit, depth + 1, false);
 
-                            if ((new_hit.getPoint() - test_hit.getPoint()).length() < EPI && (new_hit.getPoint() - h.getPoint()).length() >= 0.05) {
-#ifdef HIT_DATA
-                                printf("L(%d,%f)\n", new_hit.get_id(), (new_hit.getPoint() - h.getPoint()).length());
-#endif
-                                L_dir = scene->get_light_area() * costheta * std::fabs(Vector3f::dot(new_hit.getNormal(), wi)) / (new_hit.getPoint() - h.getPoint()).squaredLength()
-                                    * (new_hit.getMaterial()->getEmission() * h.getMaterial()->evalBSDF(wi, -r.getDirection(), h));
+                            if ((new_hit.getPoint() - test_hit.getPoint()).length() < EPI && (new_hit.getPoint() - h.getPoint()).length() >= EPI) {
+                                float inv_p_dL = scene->get_light_area() * std::fabs(Vector3f::dot(new_hit.getNormal(), wi)) / (new_hit.getPoint() - h.getPoint()).squaredLength();
+                                float p_dL = 1.f / inv_p_dL;
+                                float p_BRDF = h.getMaterial()->average_pdf(wi, -r.getDirection(), h.getNormal());
+                                // if (h.getMaterial()->get_type() == Material::MATERIAL_TYPE::GLOSSY_MATERIAL) {
+                                //     p_BRDF = h.getMaterial()->average_pdf()
+                                // }
+                                // else {
+                                //     bool tag = false;
+                                //     p_BRDF = h.getMaterial()->pdf(wi, -r.getDirection(), h.getNormal(), tag);
+                                // }
+
+                                L_dL = costheta * inv_p_dL * (new_hit.getMaterial()->getEmission(new_hit) * h.getMaterial()->evalBSDF(wi, -r.getDirection(), h));
+                                w_dL = MIS_POW == 1 ? p_dL / (p_BRDF + p_dL) : p_dL * p_dL / (p_BRDF * p_BRDF + p_dL * p_dL);
                             }
-#ifdef HIT_DATA
-                            else {
-                                printf("Lmiss\n");
-                            }
-#endif
                         }
                     }
 
+                    // Step 2. 对BRDF采样
                     if (get_random_float() < RR) {
-                        Vector3f wi = h.getMaterial()->sampleBSDF(-r.getDirection(), h.getNormal());
+                        bool tag = false;
+                        Vector3f wi = h.getMaterial()->sampleBSDF(-r.getDirection(), h.getNormal(), tag);
                         float costheta = Vector3f::dot(h.getNormal(), wi); // sample出来的wi能保证costheta>=0
-
+                        // if (h.getMaterial()->get_type() == Material::MATERIAL_TYPE::GLOSSY_MATERIAL && costheta > 0) {
+                        //     printf("!!!\n");
+                        // }
                         Ray new_ray(h.getPoint(), wi);
                         Hit test_hit;
                         castRay(new_ray, test_hit, depth + 1, false);
 
                         if (test_hit.happened() && Vector3f::dot(h.getFaceNormal(), wi) >= 0.f) {
-                            if (!test_hit.getMaterial()->hasEmission()) {
-                                Hit new_hit;
-                                L_indir = invRR * costheta * (castRay(new_ray, new_hit, depth + 1, true) * h.getMaterial()->evalBSDF(wi, -r.getDirection(), h)) / h.getMaterial()->pdf(wi, h.getNormal());
+                            Hit new_hit;
+                            L_BRDF = invRR * costheta * (castRay(new_ray, new_hit, depth + 1, true) * h.getMaterial()->evalBSDF(wi, -r.getDirection(), h)) / h.getMaterial()->pdf(wi, -r.getDirection(), h.getNormal(), tag);
+
+                            if (test_hit.getMaterial()->hasEmission()) {
+                                float p_dL = (test_hit.getPoint() - h.getPoint()).squaredLength() / (scene->get_light_area() * std::fabs(Vector3f::dot(test_hit.getNormal(), wi)));
+                                float p_BRDF = h.getMaterial()->average_pdf(wi, -r.getDirection(), h.getNormal());
+
+                                w_BRDF = MIS_POW == 1 ? p_BRDF / (p_BRDF + p_dL) : p_BRDF * p_BRDF / (p_BRDF * p_BRDF + p_dL * p_dL);
+                            }
+                            else {
+                                w_BRDF = 1.f;
                             }
                         }
                         else {
-                            L_indir = scene->getBackgroundColor();
+                            L_BRDF = scene->getBackgroundColor();
+                            w_BRDF = 1.f;
                         }
                     }
 
-                    return h.getMaterial()->getEmission() + L_dir + L_indir;
+                    // Step 3. 混合
+                    return h.getMaterial()->getEmission(h) + w_BRDF * L_BRDF + w_dL * L_dL;
                 }
-                else {
-                    if (get_random_float() < RR) {
-                        Vector3f wi = h.getMaterial()->sampleBSDF(-r.getDirection(), h.getNormal());
-                        float costheta = Vector3f::dot(h.getNormal(), wi); // sample出来的wi能保证costheta>=0
-                        Hit new_hit;
-
-                        if (Vector3f::dot(h.getFaceNormal(), wi) >= 0.f) {
-                            return h.getMaterial()->getEmission() +
-                                invRR * costheta * (castRay(Ray(h.getPoint(), wi), new_hit, depth + 1, true) * h.getMaterial()->evalBSDF(wi, -r.getDirection(), h)) / h.getMaterial()->pdf(wi, h.getNormal());
-                        }
-                    }
-
-                    return h.getMaterial()->getEmission();
-                }
-
                 break;
             }
             case Material::MATERIAL_TYPE::REFLECTIVE:
             case Material::MATERIAL_TYPE::REFRACTIVE: { // 对于这两种材质，BSDF形如一个dirac δ函数，因此无需考虑NEE，直接进行反射/折射的光线计算即可
                 if (get_random_float() < RR) {
-                    Vector3f wi = h.getMaterial()->sampleBSDF(-r.getDirection(), h.getNormal());
+                    bool tag = false;
+                    Vector3f wi = h.getMaterial()->sampleBSDF(-r.getDirection(), h.getNormal(), tag);
                     float costheta = Vector3f::dot(h.getNormal(), wi); // costheta可能<0，因此最后需要将其绝对值代入计算公式
                     Hit new_hit;
 
-                    return h.getMaterial()->getEmission() + invRR * std::fabs(costheta) * (castRay(Ray(h.getPoint(), wi), new_hit, depth + 1, true) * h.getMaterial()->evalBSDF(wi, -r.getDirection(), h)) / h.getMaterial()->pdf(wi, h.getNormal());
+                    return h.getMaterial()->getEmission(h) + invRR * std::fabs(costheta) * (castRay(Ray(h.getPoint(), wi), new_hit, depth + 1, true) * h.getMaterial()->evalBSDF(wi, -r.getDirection(), h)) / h.getMaterial()->pdf(wi, -r.getDirection(), h.getNormal(), tag);
                 }
 
-                return h.getMaterial()->getEmission();
+                return h.getMaterial()->getEmission(h);
                 break;
             }
             default: {
@@ -462,9 +545,10 @@ public:
             }
             }
         }
-        else {
-            return scene->getBackgroundColor();
-        }
+        //else {
+        return scene->getBackgroundColor();
+        //}
+        //return Vector3f::ZERO;
     }
 };
 

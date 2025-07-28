@@ -1,0 +1,52 @@
+PerspectiveCamera {
+    center 10 0.26 -0.25
+    direction -2.89778 1 0.776457
+    up 0.965926 3 -0.258819
+    angle 45
+    width 640
+    height 400
+}
+
+Lights {
+    numLights 0
+}
+
+Background {
+    color 0 0 0 
+}
+
+Materials {
+    numMaterials 2
+    PhongMaterial {
+        diffuseColor 1 1 1
+    }
+
+    PhongMaterial {
+        emission 25 25 25
+        diffuseColor 1 1 1  
+    }
+}
+
+Group {
+    numObjects 3
+    MaterialIndex 0
+    Transform {
+        Scale 0.01 0.01 0.01
+        TriangleMesh {
+            normalInterpolation
+            obj_file mesh/c_sponza/sponza.obj
+        }        
+    }
+    
+    MaterialIndex 1
+    Triangle {
+        vertex0 20 18 20
+        vertex1 -20 18 -20
+        vertex2 20 18 -20
+    }
+    Triangle {
+        vertex0 20 18 20
+        vertex1 -20 18 20
+        vertex2 -20 18 -20
+    }
+}

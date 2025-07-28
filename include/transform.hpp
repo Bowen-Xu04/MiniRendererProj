@@ -11,7 +11,7 @@ public:
     Transform() { type = OBJECT_TYPE::TRANSFORM; }
 
     Transform(const Matrix4f& m, Object3D* obj, bool _emission_is_allowed) : o(obj), emission_is_allowed(_emission_is_allowed) {
-        type = OBJECT_TYPE::TRANSFORM;
+        type = obj->get_type();
         material = o->get_material();
         transform = m;
         inv_transform = m.inverse();
@@ -20,6 +20,18 @@ public:
         float temp = std::cbrt(transform.determinant());
         ampli_coeff = temp * temp;
         area = calculate_area();
+
+        if (type == Object3D::OBJECT_TYPE::TRIANGULAR_MESH) {
+            std::vector<Object3D*> emi_objs = obj->get_emissive_objects();
+            if (!emi_objs.empty()) {
+                for (auto emi_obj : emi_objs) {
+                    emissive_objects.push_back(new Transform(m, emi_obj, _emission_is_allowed));
+                }
+            }
+            else if (obj->get_material()->hasEmission()) {
+                emissive_objects.push_back(this);
+            }
+        }
     }
 
     ~Transform() {}

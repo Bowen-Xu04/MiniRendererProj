@@ -24,6 +24,10 @@ public:
         type = OBJECT_TYPE::SPHERE;
         box = calculate_box();
         area = calculate_area();
+
+        if (material != nullptr && material->hasEmission()) {
+            emissive_objects.push_back(this);
+        }
     }
 
     ~Sphere() override {
@@ -64,6 +68,7 @@ public:
         float z = 1.0f - 2.0f * x_1;
         float r = std::sqrt(1.0f - z * z), phi = 2 * M_PI * x_2;
         Vector3f point(r * std::cos(phi), r * std::sin(phi), z);
+        point = point * radius + center;
 
         h.set(id, MAXT, material, point, (point - center).normalized());
     }

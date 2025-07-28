@@ -38,14 +38,14 @@ Materials {
 
     GlossyMaterial {
         albedo 1 0.71 0.29
-        roughness 0.5
-        metallic 0.4
+        roughness 0.1
+        metallic 1.0
     }   
 
     GlossyMaterial {
         albedo 0.91 0.92 0.92
-        roughness 0.5
-        metallic 0.4
+        roughness 0.1
+        metallic 1.0
     }  
 }
 

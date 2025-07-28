@@ -18,6 +18,8 @@ extern "C" {
 }
 #endif
 
+RENDERER_SAMPLE_TYPE renderer_sample_type = RENDERER_SAMPLE_TYPE::UNIFORM;
+
 Vector3f transformPoint(const Matrix4f& mat, const Vector3f& point) {
     return (mat * Vector4f(point, 1)).xyz();
 }
@@ -46,6 +48,7 @@ void parseMaterial(MaterialData& dst, const tinyobj::material_t& src) {
 
     dst.diffuse_texname = src.diffuse_texname; // map_Kd
     dst.normal_texname = src.normal_texname; // norm
+    dst.emissive_texname = src.emissive_texname; // map_Ke
 }
 
 // 参考已有代码：https://github.com/tinyobjloader/tinyobjloader

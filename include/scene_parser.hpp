@@ -36,6 +36,7 @@ private:
     Group* group;
 
     Sampler2D::SAMPLER2D_TYPE sampler2d_type;
+    //Material::SAMPLE_TYPE material_sample_type;
 
     bool support_point_light = true, support_directional_light = true;
     bool usingAS;
@@ -109,6 +110,10 @@ public:
     float get_light_area() {
         return total_light_area;
     }
+
+    // Material::SAMPLE_TYPE get_material_sample_type() {
+    //     return material_sample_type;
+    // }
 };
 
 #endif // SCENE_PARSER_H

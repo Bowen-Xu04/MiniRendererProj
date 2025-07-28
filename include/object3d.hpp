@@ -17,6 +17,8 @@ protected:
 
     int id;
 
+    std::vector<Object3D*> emissive_objects;
+
 public:
     enum OBJECT_TYPE {
         TRIANGLE,
@@ -44,6 +46,8 @@ public:
 
     virtual int get_id() const;
     OBJECT_TYPE get_type() const;
+
+    std::vector<Object3D*> get_emissive_objects() const;
 
     // Intersect Ray with this object. If hit, store information in hit structure.
     virtual bool intersect(const Ray& r, Hit& h) = 0;

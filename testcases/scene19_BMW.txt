@@ -1,0 +1,175 @@
+PerspectiveCamera {
+    center 30 17 30
+    direction -2.12132 -1 -2.12132
+    up -0.707107 3 -0.707107
+    angle 30
+    width 1280
+    height 800
+}
+
+Lights {
+    numLights 0
+}
+
+Background {
+    color 0 0 0 
+}
+
+Materials {
+    numMaterials 7
+    PhongMaterial {
+        diffuseColor 1 1 1
+    }
+
+    PhongMaterial {
+        emission 10 10 10
+        diffuseColor 1 1 1  
+    }
+
+    ReflectiveMaterial {
+        transmittance 1 1 1
+    }
+
+    PhongMaterial {
+        diffuseColor 0.85 1 1
+    }
+
+    PhongMaterial {
+        diffuseColor 0.85 1 0.85
+    }
+
+    PhongMaterial {
+        diffuseColor 0.55 0.27 0.075
+    }
+
+    PhongMaterial {
+        emission 25 25 25
+        diffuseColor 1 1 1
+    }
+}
+
+Group {
+    numObjects 19
+    MaterialIndex 0
+    Transform {
+        Translate 0 0.001 0
+        YRotate 60
+        Scale 0.02 0.02 0.02
+        TriangleMesh {
+            obj_file mesh/bmw/bmw.obj
+        }             
+    }
+   
+    Triangle {
+        vertex0 -50 0 -50
+        vertex1 50 0 50
+        vertex2 50 0 -50
+    }
+    Triangle {
+        vertex0 -50 0 -50
+        vertex1 -50 0 50
+        vertex2 50 0 50
+    }
+
+    MaterialIndex 3
+    Triangle {
+        vertex0 -3 0.001 11
+        vertex1 4 0.001 11
+        vertex2 4 0.001 -10
+    }
+    Triangle {
+        vertex0 -3 0.001 11
+        vertex1 4 0.001 -10
+        vertex2 -3 0.001 -10
+    }
+
+    MaterialIndex 4
+    Triangle {
+        vertex0 -10 0.001 11
+        vertex1 -3 0.001 11
+        vertex2 -3 0.001 -10
+    }
+    Triangle {
+        vertex0 -10 0.001 11
+        vertex1 -3 0.001 -10
+        vertex2 -10 0.001 -10     
+    }
+    Triangle {
+        vertex0 4 0.001 11
+        vertex1 11 0.001 11
+        vertex2 11 0.001 -10
+    }
+    Triangle {
+        vertex0 4 0.001 11
+        vertex1 11 0.001 -10
+        vertex2 4 0.001 -10
+    }
+
+    MaterialIndex 5
+    Transform {
+        Translate 7.5 3.501 -7
+        Scale 0.2 3.5 0.2
+        TriangleMesh {
+            obj_file mesh/cube.obj
+        }
+    }
+
+    MaterialIndex 6
+    Transform {
+        Translate 7.5 8.001 -7
+        TriangleMesh {
+            obj_file mesh/cube.obj
+        }
+    }
+
+    MaterialIndex 0
+    Transform {
+        Translate -11.01 6 0.5
+        Scale 1 6 10.5
+        TriangleMesh {
+            obj_file mesh/cube.obj
+        }
+    }
+
+    Transform {
+        Translate 0.5 6 -11.01
+        Scale 10.5 6 1
+        TriangleMesh {
+            obj_file mesh/cube.obj
+        }
+    }
+
+    MaterialIndex 2
+    Triangle {
+        vertex0 -10 0 11
+        vertex1 -10 0 -10
+        vertex2 -10 12 11
+    }
+    Triangle {
+        vertex0 -10 0 -10
+        vertex1 -10 12 -10
+        vertex2 -10 12 11
+    }
+    Triangle {
+        vertex0 -10 0 -10
+        vertex1 11 0 -10
+        vertex2 -10 12 -10
+    }
+    Triangle {
+        vertex0 11 0 -10
+        vertex1 11 12 -10
+        vertex2 -11 12 -10
+    }
+
+    MaterialIndex 1
+    Triangle {
+        vertex0 20 30 30
+        vertex1 -20 30 30
+        vertex2 20 40 20
+    }
+    Triangle {
+        vertex0 -20 30 30
+        vertex1 -20 40 20
+        vertex2 20 40 20
+    }
+}

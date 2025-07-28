@@ -72,7 +72,19 @@ const std::string window_name = "RTProject";
 const int MAX_THREAD_NUM = omp_get_max_threads();
 const int CHECK_PROGRESS_THREAD_INDEX = MAX_THREAD_NUM / 2;
 
+const int MIS_POW = 2;
+
 class Object3D;
+
+enum RENDERER_SAMPLE_TYPE {
+    UNIFORM,
+    TRIVIAL_NEE,
+    COS_WEIGHTED,
+    BRDF,
+    MIS
+};
+
+extern RENDERER_SAMPLE_TYPE renderer_sample_type;
 
 struct TriangleData {
     std::vector<int> vertexIndices;
@@ -128,6 +140,7 @@ struct MaterialData {
 
     std::string diffuse_texname;
     std::string normal_texname;
+    std::string emissive_texname;
 
     bool enable_diffuse_texture;
     bool enable_normal_texture;

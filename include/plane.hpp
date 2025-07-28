@@ -22,6 +22,10 @@ public:
         id = primitive_cnt++;
         type = OBJECT_TYPE::PLANE;
         box = calculate_box();
+
+        if (material != nullptr && material->hasEmission()) {
+            emissive_objects.push_back(this);
+        }
     }
 
     ~Plane() override {

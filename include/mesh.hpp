@@ -19,6 +19,7 @@ struct MeshData {
     std::vector<int> vertexIndices; // 顶点的index
     std::vector<Vector3f> vertices; // 所有顶点的坐标
     std::vector<Object3D*> triangles;
+    std::vector<Object3D*> emissive_triangles;
 
     std::vector<int> normalIndices; // 法向量的index
     std::vector<Vector3f> normals; // 所有顶点的法向量
@@ -35,7 +36,10 @@ struct MeshData {
 
     MeshData(std::vector<int>&& _vertexIndices, std::vector<Vector3f>&& _vertices, std::vector<Object3D*>&& _triangles, std::vector<int>&& _texIndices, std::vector<Vector2f>&& _texCoords, std::vector<Material*>&& _materials) :
         vertexIndices(std::move(_vertexIndices)), vertices(std::move(_vertices)), triangles(std::move(_triangles)), texIndices(std::move(_texIndices)), texCoords(std::move(_texCoords)), materials(std::move(_materials)) {
-        assert(!triangles.empty());
+        if (triangles.empty()) {
+            printf("ERROR: No triangle.\n");
+            exit(1);
+        }
         id_begin = triangles[0]->get_id();
         create_blas();
     }

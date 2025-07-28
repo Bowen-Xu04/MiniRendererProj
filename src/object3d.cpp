@@ -16,6 +16,10 @@ Object3D::Object3D(Material* material) {
 int Object3D::get_id() const { return id; }
 Object3D::OBJECT_TYPE Object3D::get_type() const { return type; }
 
+std::vector<Object3D*> Object3D::get_emissive_objects() const {
+    return emissive_objects;
+}
+
 // Intersect Ray with this object. If hit, store information in hit structure.
 AABB Object3D::calculate_box() { return AABB(); }
 

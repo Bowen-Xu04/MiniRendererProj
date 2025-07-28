@@ -39,8 +39,11 @@ bool Mesh::intersect(const Ray& r, Hit& h) {
 
         if (h.getMaterial() == nullptr) { // 这说明该mesh没有纹理贴图（即自带材质），因此要额外赋予mesh的材质
             h.set_material(material);
-        }
 
+        }
+        // if (material->get_type() == Material::MATERIAL_TYPE::REFRACTIVE) {
+        //     printf("!!!\n");
+        // }
         if (h.happened() && h.getMaterial() == nullptr) {
             printf("ERROR: No material for object #%d.\n", h.get_id());
             exit(1);
@@ -95,12 +98,16 @@ Mesh::Mesh(const char* filename, Material* material, bool _usingAS, bool _usingG
         meshData->id_begin = Object3D::get_primitive_cnt();
         // 如果三角网格带有材质，则由.mtl文件指定的材质会覆盖三角形的material（但不会管mesh的material）
         // 事实上，在有自带材质的情况下，根据代码的实现逻辑，Mesh类的构造函数中传入的材质指针永远不会被调用（调用的都是triangle的材质）
-        // 如果三角网格没有材质，将meshData中triangles的材质设为mesh本身的材质
+        // 如果三角网格没有材质，将meshData中triangles的材质设为nullptr，使用mesh本身的材质
         for (int i = 0;i < meshData->vertexIndices.size() / 3;i++) {
             meshData->triangles.push_back(new Triangle(meshData->vertices[meshData->vertexIndices[3 * i]],
                 meshData->vertices[meshData->vertexIndices[3 * i + 1]],
                 meshData->vertices[meshData->vertexIndices[3 * i + 2]],
-                _material_ids[i] == -1 ? material : meshData->materials[_material_ids[i]]));
+                _material_ids[i] == -1 ? nullptr : meshData->materials[_material_ids[i]]));
+
+            if (_material_ids[i] != -1 && meshData->materials[_material_ids[i]]->hasEmission()) {
+                meshData->emissive_triangles.push_back(meshData->triangles.back());
+            }
         }
 
         meshData->area = calculate_area();
@@ -114,7 +121,7 @@ Mesh::Mesh(const char* filename, Material* material, bool _usingAS, bool _usingG
 
     box = meshData->box;
     area = meshData->area;
-
+    emissive_objects = meshData->emissive_triangles;
 }
 
 float Mesh::calculate_area() {
